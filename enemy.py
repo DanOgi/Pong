@@ -1,9 +1,8 @@
 import pygame
 import random
-from main import *
 
 class Enemy:
-    def __init__(self, pos:list, size:tuple, speed) -> None:
+    def __init__(self, pos:list, size:tuple, speed, game) -> None:
         self.pos = pos
         self.size = size
         self.speed = speed
@@ -11,9 +10,10 @@ class Enemy:
         self.points = 0
         self.move_vector = pygame.math.Vector2(0, 0)
         self.rect = pygame.Rect(0, 0, 0, 0)
+        self.game = game
     #draw a enemy on screen
     def draw(self):
-        self.rect = pygame.draw.rect(screen, self.color, (*self.pos, *self.size))
+        self.rect = pygame.draw.rect(self.game.screen, self.color, (*self.pos, *self.size))
 
     #update enemy's parameters
     def update(self, ball, game_state):
@@ -48,7 +48,7 @@ class Enemy:
                 pass
 
         if self.pos[1] <= 0: self.pos[1] = 0
-        if self.pos[1] >= height-self.size[1]: self.pos[1] = height-self.size[1]
+        if self.pos[1] >= self.game.height-self.size[1]: self.pos[1] = self.game.height-self.size[1]
                 
     def shot(self, ball):
         rand = random.randint(0, 2) - 1

@@ -1,14 +1,14 @@
 import pygame
-from main import *
 
 class Player:
-    def __init__(self, pos: list, size: tuple, speed) -> None:
+    def __init__(self, pos: list, size: tuple, speed, game) -> None:
         self.pos = pos
         self.size = size
         self.speed = speed
         self.color = (255, 255, 255)
         self.move_vector = pygame.math.Vector2(0, 0)
         self.points = 0
+        self.game = game
 
     #player movement control 
     def move(self):
@@ -23,7 +23,7 @@ class Player:
         self.pos[1] += self.move_vector.y * self.speed
 
         if self.pos[1] <= 0: self.pos[1] = 0
-        if self.pos[1] >= height-self.size[1]: self.pos[1] = height-self.size[1]
+        if self.pos[1] >= self.game.height-self.size[1]: self.pos[1] = self.game.height-self.size[1]
 
     #shot ball on game's start
     def shot(self, ball):
@@ -40,4 +40,4 @@ class Player:
 
     #draw a player on screen
     def draw(self):
-        self.rect = pygame.draw.rect(screen, self.color, (*self.pos, *self.size))
+        self.rect = pygame.draw.rect(self.game.screen, self.color, (*self.pos, *self.size))

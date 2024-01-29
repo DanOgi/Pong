@@ -1,8 +1,7 @@
 import pygame 
-from main import *
 
 class Ball:
-    def __init__(self, pos:list, radius:int, speed) -> None:
+    def __init__(self, pos:list, radius:int, speed, game) -> None:
         self.pos = pos
         self.radius = radius
         self.color = (255, 255, 255)
@@ -11,10 +10,11 @@ class Ball:
         self.touch_by_player = 0
         self.touch_by_enemy = 0
         self.rect = pygame.Rect(0, 0, 0, 0)
+        self.game = game
     
     # draw a ball on screen
     def draw(self):
-        self.rect = pygame.draw.circle(screen, self.color, self.pos, self.radius)
+        self.rect = pygame.draw.circle(self.game.screen, self.color, self.pos, self.radius)
 
     # ball's movement
     def move(self, game_state, player, enemy):
@@ -27,7 +27,7 @@ class Ball:
 
             case 1:
                 self.pos += self.move_vector * self.speed
-                if self.pos[1] - self.radius >= height or self.pos[1] + self.radius <= 0:
+                if self.pos[1] - self.radius >= self.game.height or self.pos[1] + self.radius <= 0:
                     self.move_vector[1] = -self.move_vector[1]
                 
                 # colision with enemy
