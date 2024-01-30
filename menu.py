@@ -8,29 +8,29 @@ class Menu:
         self.width = 1280
         self.height = 720
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.font = pygame.font.Font(None, 32)
+        self.font = pygame.font.Font(None, 256)
         self.clock = pygame.time.Clock()
         self.running = False
 
     def run(self):
 
         game_button = Button(self.screen, 
-                         (100, 100), 
-                         (200, 100), 
+                         (self.width/2-100, 275), 
+                         (200, 75), 
                          "Nowa Gra",
                          text_size=32,
                          bg_color=(100, 100, 100))
         
         option_button = Button(self.screen, 
-                         (100, 300), 
-                         (200, 100), 
+                         (self.width/2-100, 375), 
+                         (200, 75), 
                          "Opcje",
                          text_size=32,
                          bg_color=(100, 100, 100))
         
         exit_button = Button(self.screen, 
-                         (100, 500), 
-                         (200, 100), 
+                         (self.width/2-100, 475), 
+                         (200, 75), 
                          "Wyjdź z gry",
                          text_size=32,
                          bg_color=(100, 100, 100))
@@ -47,8 +47,9 @@ class Menu:
                 self.stop()
                 
             self.screen.fill("black")
-            text = self.font.render("Menu", False, (255,255,255))
-            self.screen.blit(text, (20, 20))
+            text = self.font.render("Pong", False, (255,255,255))
+            text_rect = text.get_rect()
+            self.screen.blit(text, (self.width/2-text_rect.width/2, 20))
             
             game_button.draw()
             option_button.draw()

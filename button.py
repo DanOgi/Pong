@@ -29,3 +29,6 @@ class Button():
         pygame.draw.rect(self.screen, self.bg_color, self.rect)
         self.screen.blit(text_surface, (self.rect.centerx-text_rect.centerx, 
                                         self.rect.centery-text_rect.centery))
+    
+    def on_press(self):
+        pass

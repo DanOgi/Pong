@@ -3,14 +3,12 @@ from game import Game
 from menu import Menu
 
 #TODO ulepszyć sztuczną inteligencję przeciwnika
-#TODO dodać menu
+#TODO W menu dodać funckjonalność klawiszy
 
 game = Game()
 menu = Menu()
 
 game_mode = 0
-
-
 
 while True:
     keys = pygame.key.get_pressed()
