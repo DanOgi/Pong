@@ -21,13 +21,16 @@ class Game:
         self.enemy = Enemy(pos=[self.width-35, self.height/2-50], size=(25, 100), speed=5, game=self)
         self.game_state = 0
         pygame.mixer.music.load('ping_pong.mp3')
+        self.running = False
 
     def run(self):
-        while True:
+        while self.running:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.font.quit()
+                    pygame.mixer.quit()
+                    pygame.quit()
                     sys.exit()
 
             self.screen.fill("black")
@@ -59,6 +62,8 @@ class Game:
             #screen.blit(text, (20, 20))
 
             keys = pygame.key.get_pressed()
+            if keys[pygame.K_F1]:
+                self.stop()
     
             #change game state
             match self.game_state:
@@ -86,3 +91,9 @@ class Game:
 
             self.clock.tick(self.fps)
             pygame.display.flip()
+        
+    def start(self):
+        self.running = True
+        
+    def stop(self):
+        self.running = False
