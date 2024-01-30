@@ -8,7 +8,7 @@ class Menu:
         self.width = 1280
         self.height = 720
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.font = pygame.font.Font(None, 256)
+        self.font = pygame.font.Font("upheavtt.ttf", 256)
         self.clock = pygame.time.Clock()
         self.running = False
 
@@ -16,24 +16,27 @@ class Menu:
 
         game_button = Button(self.screen, 
                          (self.width/2-100, 275), 
-                         (200, 75), 
+                         (225, 75), 
                          "Nowa Gra",
                          text_size=32,
-                         bg_color=(100, 100, 100))
+                         bg_color=(100, 100, 100),
+                         font_family="upheavtt.ttf")
         
         option_button = Button(self.screen, 
                          (self.width/2-100, 375), 
-                         (200, 75), 
+                         (225, 75), 
                          "Opcje",
                          text_size=32,
-                         bg_color=(100, 100, 100))
+                         bg_color=(100, 100, 100),
+                         font_family="upheavtt.ttf")
         
         exit_button = Button(self.screen, 
                          (self.width/2-100, 475), 
-                         (200, 75), 
-                         "Wyjdź z gry",
+                         (225, 75), 
+                         "Wyjdz z gry",
                          text_size=32,
-                         bg_color=(100, 100, 100))
+                         bg_color=(100, 100, 100),
+                         font_family="upheavtt.ttf")
 
         while self.running:
             for event in pygame.event.get():
