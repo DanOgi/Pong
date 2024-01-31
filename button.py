@@ -11,7 +11,7 @@ class Button():
                  text: str, 
                  text_size: int = 20, 
                  text_color: Color = (255, 255, 255),
-                 bg_color: Color = None,
+                 bg_color: Color = (0, 0, 0, 0),
                  font_family: Font = None) -> None:
 
         pygame.font.init()
@@ -32,5 +32,11 @@ class Button():
         self.screen.blit(text_surface, (self.rect.centerx-text_rect.centerx, 
                                         self.rect.centery-text_rect.centery))
     
-    def on_press(self):
-        pass
+    def on_hover(self) -> bool:
+        mouse_pos = pygame.mouse.get_pos()
+        return self.rect.collidepoint(*mouse_pos)
+    
+    def on_press(self) -> bool:
+        if self.on_hover():
+            return pygame.mouse.get_pressed()[0]
+        return False

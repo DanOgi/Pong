@@ -3,7 +3,7 @@ import sys
 from button import Button
 
 class Menu:
-    def __init__(self) -> None:
+    def __init__(self, game_mode) -> None:
         pygame.font.init()
         self.width = 1280
         self.height = 720
@@ -11,31 +11,32 @@ class Menu:
         self.font = pygame.font.Font("upheavtt.ttf", 256)
         self.clock = pygame.time.Clock()
         self.running = False
+        self.game_mode = game_mode
 
     def run(self):
 
         game_button = Button(self.screen, 
-                         (self.width/2-100, 275), 
+                         (self.width/2-100, 300), 
                          (225, 75), 
                          "Nowa Gra",
                          text_size=32,
-                         bg_color=(100, 100, 100),
+                         text_color=(200, 200, 200),
                          font_family="upheavtt.ttf")
         
         option_button = Button(self.screen, 
-                         (self.width/2-100, 375), 
+                         (self.width/2-100, 400), 
                          (225, 75), 
                          "Opcje",
                          text_size=32,
-                         bg_color=(100, 100, 100),
+                         text_color=(200, 200, 200),
                          font_family="upheavtt.ttf")
         
         exit_button = Button(self.screen, 
-                         (self.width/2-100, 475), 
+                         (self.width/2-100, 500), 
                          (225, 75), 
                          "Wyjdz z gry",
                          text_size=32,
-                         bg_color=(100, 100, 100),
+                         text_color=(200, 200, 200),
                          font_family="upheavtt.ttf")
 
         while self.running:
@@ -54,9 +55,29 @@ class Menu:
             text_rect = text.get_rect()
             self.screen.blit(text, (self.width/2-text_rect.width/2, 20))
             
+            if game_button.on_hover():
+                game_button.text_color = (255, 255, 255)
+            else:
+                game_button.text_color = (200, 200, 200)
+
+            if option_button.on_hover():
+                option_button.text_color = (255, 255, 255)
+            else:
+                option_button.text_color = (200, 200, 200)
+            
+            if exit_button.on_hover():
+                exit_button.text_color = (255, 255, 255)
+            else:
+                exit_button.text_color = (200, 200, 200)
+            
             game_button.draw()
             option_button.draw()
             exit_button.draw()
+
+            if game_button.on_press():
+                self.running = False
+                self.game_mode.mode = 1
+                break
 
             self.clock.tick(60)
             pygame.display.flip()
