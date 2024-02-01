@@ -79,6 +79,11 @@ class Menu:
                 self.game_mode.mode = 1
                 break
 
+            if exit_button.on_press():
+                self.running = False
+                pygame.quit()
+                sys.exit()
+
             self.clock.tick(60)
             pygame.display.flip()
 

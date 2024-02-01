@@ -4,7 +4,7 @@ from menu import Menu
 from game_mode import GameMode
 
 #TODO ulepszyć sztuczną inteligencję przeciwnika
-#TODO W menu dodać funckjonalność klawiszy
+#TODO zmienić klasę menu i sprawić by były inne klasy, które dziedziczą klasę menu
 
 game_mode = GameMode()
 game = Game()
