@@ -29,6 +29,7 @@ class Ball():
                 self.is_moving_down = False
                 self.is_moving_left = False
                 self.is_moving_right = False
+                self.speed = 5
 
             case GameState.ENEMY_START:
                 self.is_moving_up = False
@@ -43,6 +44,7 @@ class Ball():
                 self.is_moving_down = False
                 self.is_moving_left = False
                 self.is_moving_right = False
+                self.speed = 5
 
             case GameState.BALL_IN_GAME:
                 if self.rect.colliderect(self.game.player) and self.is_moving_left:
@@ -50,12 +52,14 @@ class Ball():
                     self.is_moving_right = True
                     self.is_moving_up = self.game.player.is_moving_up
                     self.is_moving_down = self.game.player.is_moving_down
-        
+                    if self.speed != 20: self.speed += 1
+
                 if self.rect.colliderect(self.game.enemy) and self.is_moving_right:
                     self.is_moving_right = False
                     self.is_moving_left = True
                     self.is_moving_up = self.game.enemy.is_moving_up
                     self.is_moving_down = self.game.enemy.is_moving_down
+                    if self.speed != 20: self.speed += 1
                 
                 if self.rect.top <= 0 and self.is_moving_up:
                     self.is_moving_up = False

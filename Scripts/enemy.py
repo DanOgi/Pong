@@ -1,4 +1,5 @@
 import pygame
+from game_state import GameState
 
 class Enemy():
     def __init__(self, game, size, pos) -> None:
@@ -12,6 +13,30 @@ class Enemy():
         self.rect = pygame.Rect(*self.pos, *self.size)
 
     def update(self) -> None:
+        match self.game.game_state:
+            case GameState.PLAYER_START:
+                self.is_moving_up = False
+                self.is_moving_down = False
+            case GameState.PLAYER_GETS_POINT:
+                self.is_moving_up = False
+                self.is_moving_down = False
+            case GameState.ENEMY_START:
+                self.is_moving_up = False
+                self.is_moving_down = False
+            case GameState.ENEMY_GETS_POINT:
+                self.is_moving_up = False
+                self.is_moving_down = False
+            case GameState.BALL_IN_GAME:
+                if self.game.ball.rect.centery - self.rect.centery > 15:
+                    self.is_moving_down = True
+                    self.is_moving_up = False
+                elif self.game.ball.rect.centery - self.rect.centery < -15:
+                    self.is_moving_down = False
+                    self.is_moving_up = True
+                else:
+                    self.is_moving_down = False
+                    self.is_moving_up = False
+                    
         self.move_vect.y = self.is_moving_down - self.is_moving_up
         self.rect = self.rect.move(self.move_vect * self.speed)
         if self.rect.top <= 0: self.rect.top = 0 

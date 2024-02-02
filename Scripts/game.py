@@ -5,6 +5,7 @@ from ball import Ball
 from game_state import GameState
 import pygame
 import sys
+import random
 
 class Game(Scene):
 
@@ -15,29 +16,52 @@ class Game(Scene):
         self.enemy = Enemy(self, (25, 100), [self.main.width-25-10, self.main.height/2-50])
         self.ball = Ball(self)
         self.game_state = GameState.PLAYER_START
+        self.player_points = 0
+        self.enemy_points = 0
+        pygame.font.init()
+        self.font = pygame.font.Font(None, 128)
 
     def update(self): #change the game parameters
         match self.game_state:
             case GameState.PLAYER_START:
-                print("Player start")
+                pass
             case GameState.PLAYER_GETS_POINT:
-                print("Player gets a point")
+                self.player_points += 1
+                self.game_state = GameState.ENEMY_START
             case GameState.ENEMY_START:
-                print("Enemy start")
+                v = random.randint(0, 1)
+                if v: 
+                    self.ball.is_moving_up = True
+                else:
+                    self.ball.is_moving_down = True
+                self.ball.is_moving_left = True
+                self.game_state = GameState.BALL_IN_GAME
             case GameState.ENEMY_GETS_POINT:
-                print("Enemy gets a point")
+                self.enemy_points += 1
+                self.game_state = GameState.PLAYER_START
             case GameState.BALL_IN_GAME:
                 if self.ball.rect.left == 0:
                     self.game_state = GameState.ENEMY_GETS_POINT
                 if self.ball.rect.right == self.main.width:
                     self.game_state = GameState.PLAYER_GETS_POINT
-                print("Ball in game")
 
         self.player.update()
         self.enemy.update()
         self.ball.update()
 
     def display(self): #draw every item
+        player_points_text = self.font.render(str(self.player_points), False, (150, 150, 150))
+        player_points_rect = player_points_text.get_rect()
+        self.main.window.blit(player_points_text, (self.main.width/4 - player_points_rect.centerx, self.main.height/4 - player_points_rect.centery))
+
+        enemy_points_text = self.font.render(str(self.enemy_points), False, (150, 150, 150))
+        enemy_points_rect = enemy_points_text.get_rect()
+        self.main.window.blit(enemy_points_text, (3*self.main.width/4 - enemy_points_rect.centerx, self.main.height/4 - enemy_points_rect.centery))
+    
+        for i in range(11):
+            if not i%2:
+                pygame.draw.line(self.main.window, (150, 150, 150), (self.main.width/2, (self.main.height/11)*i), (self.main.width/2, (self.main.height/11)*(i+1)), 10)
+
         self.player.draw()
         self.enemy.draw()
         self.ball.draw()
