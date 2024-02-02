@@ -10,14 +10,18 @@ class Menu(Scene):
         self.font = pygame.font.Font(None, 128)
         self.game_button = Button(
             self.main.window,
-            (self.main.width/2-25, 300),
-            (50, 100),
+            (self.main.width/2 - 150, 300),
+            (300, 100),
             "Nowa Gra",
             64
         )
         super().__init__()
 
     def update(self):
+        if not self.game_button.on_hover():
+            self.game_button.text_color = (200, 200, 200)
+        else:
+            self.game_button.text_color = (255, 255, 255)
         if self.game_button.on_press():
             self.main.curr_disp = self.main.game
 
