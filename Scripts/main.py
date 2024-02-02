@@ -4,11 +4,13 @@ import pygame
 
 class Main():
     def __init__(self) -> None:
-        self.window = pygame.display.set_mode((1280, 720))
+        self.width = 1280
+        self.height = 720
+        self.window = pygame.display.set_mode((self.width, self.height))
         self.time = pygame.time.Clock()
         self.game = Game(self)
         self.menu = Menu(self)
-        self.curr_disp = self.menu
+        self.curr_disp = self.game
 
     def loop(self) -> None:
         while True:
@@ -19,7 +21,7 @@ class Main():
             self.curr_disp.display()
             
             pygame.display.flip()
-            self.time.tick(60)
-
+            self.dt = self.time.tick(60)
+            
 m = Main()
 m.loop()
