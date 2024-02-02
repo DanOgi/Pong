@@ -10,7 +10,7 @@ class Main():
         self.time = pygame.time.Clock()
         self.game = Game(self)
         self.menu = Menu(self)
-        self.curr_disp = self.game
+        self.curr_disp = self.menu
 
     def loop(self) -> None:
         while True:

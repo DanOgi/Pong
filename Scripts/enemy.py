@@ -5,7 +5,7 @@ class Enemy():
     def __init__(self, game, size, pos) -> None:
         self.game = game
         self.size = size
-        self.speed = 5
+        self.speed = 7
         self.pos = pygame.math.Vector2(*pos)
         self.move_vect = pygame.math.Vector2(0, 0)
         self.is_moving_up = False
