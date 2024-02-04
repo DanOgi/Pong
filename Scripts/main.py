@@ -4,10 +4,8 @@ from credits import Credits
 from options import Options
 import pygame
 
-#TODO Sprawić by przycisk działał tylko raz po wciśnięciu
-#TODO W opcjach dodać przycisk Accept
-#TODO Sprawić by program zmieniał rozdzielczość po zaakceptowaniu
 #TODO Naprawić wymiary obiektów w grze
+#TODO Dodać funkcje on_clicked do klasy Button
 
 class Main():
     def __init__(self) -> None:

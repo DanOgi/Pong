@@ -21,6 +21,7 @@ class Button():
         self.text = text
         self.text_color = text_color
         self.bg_color = bg_color
+        self.was_clicked = False
     
     def draw(self):
         text_surface = self.font.render(self.text,
@@ -37,6 +38,9 @@ class Button():
         return self.rect.collidepoint(*mouse_pos)
     
     def on_press(self) -> bool:
-        if self.on_hover():
-            return pygame.mouse.get_pressed()[0]
+        if self.was_clicked and not pygame.mouse.get_pressed()[0]:
+            self.was_clicked = False
+        if self.on_hover() and not self.was_clicked and pygame.mouse.get_pressed()[0]:
+            self.was_clicked = True
+            return True
         return False

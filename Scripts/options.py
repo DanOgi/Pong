@@ -29,30 +29,40 @@ class Options(Scene):
         )
         self.window_size_index = 0
         self.window_size_options = ["320 x 240", 
-                                    "480 × 320", 
-                                    "640 × 480", 
-                                    "800 × 480", 
-                                    "800 × 600",
-                                    "1024 × 600",
-                                    "1024 × 768",
-                                    "1280 × 720", 
-                                    "1280 × 800",
-                                    "1280 × 1024",
-                                    "1366 × 768",
-                                    "1400 × 1050",  
-                                    "1440 × 900",  
-                                    "1600 × 1024", 
-                                    "1600 × 1200",
-                                    "1600 × 900",
-                                    "1680 × 1050",
-                                    "1920 × 1080"]
+                                    "480 x 320", 
+                                    "640 x 480", 
+                                    "800 x 480", 
+                                    "800 x 600",
+                                    "1024 x 600",
+                                    "1024 x 768",
+                                    "1280 x 720", 
+                                    "1280 x 800",
+                                    "1280 x 1024",
+                                    "1366 x 768",
+                                    "1400 x 1050",  
+                                    "1440 x 900",  
+                                    "1600 x 1024", 
+                                    "1600 x 1200",
+                                    "1600 x 900",
+                                    "1680 x 1050",
+                                    "1920 x 1080"]
         self.window_size_options_len = len(self.window_size_options)
+        self.accept_button = Button(
+            self.main.window,
+            (self.main.width*3/4, self.main.height*3/4),
+            (100, 50),
+            "Accept",
+            32,
+            font_family="Assets/upheavtt.ttf"
+        )
+
     def display(self) -> None:
         self.main.window.blit(self.window_size_text, (self.main.width/4, self.main.height/2 - self.window_size_rect.centery))
         self.windows_size_button_left.draw()
         carousel_rect = self.carousel()
         self.windows_size_button_righ.rect.left = carousel_rect.right
         self.windows_size_button_righ.draw()
+        self.accept_button.draw()
 
     def update(self) -> None:
         if self.windows_size_button_left.on_press():
@@ -64,6 +74,12 @@ class Options(Scene):
             self.window_size_index += 1
             if self.window_size_index == self.window_size_options_len - 1:
                 self.window_size_index = 0
+
+        if self.accept_button.on_press():
+            width, height = self.window_size_options[self.window_size_index].split(' x ')
+            self.main.width = int(width)
+            self.main.height = int(height)
+            self.main.window = pygame.display.set_mode((self.main.width, self.main.height))
 
     def check_events(self) -> None:
         for event in pygame.event.get():
