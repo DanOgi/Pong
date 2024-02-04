@@ -46,6 +46,8 @@ class Menu(Scene):
             self.option_button.text_color = (200, 200, 200)
         else:
             self.option_button.text_color = (255, 255, 255)
+        if self.option_button.on_press():
+            self.main.curr_disp = self.main.options_menu
 
         if not self.credit_button.on_hover():
             self.credit_button.text_color = (200, 200, 200)

@@ -1,9 +1,8 @@
 from game import Game
 from menu import Menu
 from credits import Credits
+from options import Options
 import pygame
-
-#TODO stworzyć sceny do opcji i kreditsów
 
 class Main():
     def __init__(self) -> None:
@@ -14,6 +13,7 @@ class Main():
         self.game = Game(self)
         self.main_menu = Menu(self)
         self.credits_menu = Credits(self)
+        self.options_menu = Options(self)
         self.curr_disp = self.main_menu
 
     def loop(self) -> None:
