@@ -4,6 +4,11 @@ from credits import Credits
 from options import Options
 import pygame
 
+#TODO Sprawić by przycisk działał tylko raz po wciśnięciu
+#TODO W opcjach dodać przycisk Accept
+#TODO Sprawić by program zmieniał rozdzielczość po zaakceptowaniu
+#TODO Naprawić wymiary obiektów w grze
+
 class Main():
     def __init__(self) -> None:
         self.width = 1280
@@ -14,7 +19,7 @@ class Main():
         self.main_menu = Menu(self)
         self.credits_menu = Credits(self)
         self.options_menu = Options(self)
-        self.curr_disp = self.main_menu
+        self.curr_disp = self.options_menu
 
     def loop(self) -> None:
         while True:
