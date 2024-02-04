@@ -1,5 +1,6 @@
 from game import Game
 from menu import Menu
+from credits import Credits
 import pygame
 
 #TODO stworzyć sceny do opcji i kreditsów
@@ -12,6 +13,7 @@ class Main():
         self.time = pygame.time.Clock()
         self.game = Game(self)
         self.main_menu = Menu(self)
+        self.credits_menu = Credits(self)
         self.curr_disp = self.main_menu
 
     def loop(self) -> None:

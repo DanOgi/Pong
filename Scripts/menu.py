@@ -51,7 +51,8 @@ class Menu(Scene):
             self.credit_button.text_color = (200, 200, 200)
         else:
             self.credit_button.text_color = (255, 255, 255)
-        
+        if self.credit_button.on_press():
+            self.main.curr_disp = self.main.credits_menu
 
 
     def display(self):

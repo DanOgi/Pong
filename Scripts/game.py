@@ -82,9 +82,19 @@ class Game(Scene):
                     self.ball.is_moving_down = self.player.is_moving_down
                     self.ball.is_moving_up = self.player.is_moving_up
                     self.game_state = GameState.BALL_IN_GAME
+                if event.key == pygame.K_ESCAPE:
+                    self.main.curr_disp = self.main.main_menu
+                    self.reset()
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_s:
                     self.player.is_moving_down = False
                 if event.key == pygame.K_w:
                     self.player.is_moving_up = False
+
+    def reset(self):
+        self.player_points = 0
+        self.enemy_points = 0
+        self.player.rect.centery = self.main.height/2
+        self.enemy.rect.centery = self.main.height/2
+        self.game_state = GameState.PLAYER_START
