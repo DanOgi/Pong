@@ -2,6 +2,7 @@ import pygame
 import sys
 from scene import Scene
 from button import Button
+from window_resolution_state import WindowResolutionState
 
 class Options(Scene):
     def __init__(self, main) -> None:
@@ -75,8 +76,8 @@ class Options(Scene):
             if self.window_size_index == self.window_size_options_len - 1:
                 self.window_size_index = 0
 
-        if self.accept_button.on_click():
-            width, height = self.window_size_options[self.window_size_index].split(' x ')
+        if self.accept_button.on_press():
+            width, height = WindowResolutionState.get_resolution_from_index(self.window_size_index)
             self.main.width = int(width)
             self.main.height = int(height)
             self.main.window = pygame.display.set_mode((self.main.width, self.main.height))
