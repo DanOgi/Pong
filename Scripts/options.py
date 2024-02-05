@@ -66,6 +66,9 @@ class Options(Scene):
         self.accept_button.draw()
 
     def update(self) -> None:
+        if self.main.was_resolution_changed:
+            self.restart_resolution()
+        
         if self.windows_size_button_left.on_click():
             self.window_size_index -= 1
             if self.window_size_index == -1:
@@ -78,8 +81,8 @@ class Options(Scene):
 
         if self.accept_button.on_press():
             width, height = WindowResolutionState.get_resolution_from_index(self.window_size_index)
-            self.main.width = int(width)
-            self.main.height = int(height)
+            self.main.width = width
+            self.main.height = height
             self.main.window = pygame.display.set_mode((self.main.width, self.main.height))
 
     def check_events(self) -> None:
@@ -96,3 +99,11 @@ class Options(Scene):
         text = self.font.render(self.window_size_options[self.window_size_index], False, (255, 255, 255))
         text_rect = self.main.window.blit(text, (self.windows_size_button_left.rect.right, self.windows_size_button_left.rect.top))
         return text_rect
+    
+    def restart_resolution(self):
+        self.windows_size_button_left.rect.update(self.main.width/4 + self.window_size_rect.right, self.main.height/2  - self.window_size_rect.centery, 32, 32)
+        self.windows_size_button_righ.rect.update(self.main.width*3/4, self.main.height*3/4, 32, 32)
+        self.accept_button.rect.update(self.main.width*3/4, self.main.height*3/4, 100, 50)
+    
+    def restat_font_size(self):
+        pass
