@@ -39,21 +39,21 @@ class Menu(Scene):
             self.game_button.text_color = (200, 200, 200)
         else:
             self.game_button.text_color = (255, 255, 255)
-        if self.game_button.on_press():
+        if self.game_button.on_click():
             self.main.curr_disp = self.main.game
 
         if not self.option_button.on_hover():
             self.option_button.text_color = (200, 200, 200)
         else:
             self.option_button.text_color = (255, 255, 255)
-        if self.option_button.on_press():
+        if self.option_button.on_click():
             self.main.curr_disp = self.main.options_menu
 
         if not self.credit_button.on_hover():
             self.credit_button.text_color = (200, 200, 200)
         else:
             self.credit_button.text_color = (255, 255, 255)
-        if self.credit_button.on_press():
+        if self.credit_button.on_click():
             self.main.curr_disp = self.main.credits_menu
 
 

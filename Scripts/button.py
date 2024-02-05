@@ -38,6 +38,11 @@ class Button():
         return self.rect.collidepoint(*mouse_pos)
     
     def on_press(self) -> bool:
+        if self.on_hover():
+            return pygame.mouse.get_pressed()[0]
+        return False
+    
+    def on_click(self) -> bool:
         if self.was_clicked and not pygame.mouse.get_pressed()[0]:
             self.was_clicked = False
         if self.on_hover() and not self.was_clicked and pygame.mouse.get_pressed()[0]:

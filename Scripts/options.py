@@ -65,17 +65,17 @@ class Options(Scene):
         self.accept_button.draw()
 
     def update(self) -> None:
-        if self.windows_size_button_left.on_press():
+        if self.windows_size_button_left.on_click():
             self.window_size_index -= 1
             if self.window_size_index == -1:
                 self.window_size_index = self.window_size_options_len - 1
         
-        if self.windows_size_button_righ.on_press():
+        if self.windows_size_button_righ.on_click():
             self.window_size_index += 1
             if self.window_size_index == self.window_size_options_len - 1:
                 self.window_size_index = 0
 
-        if self.accept_button.on_press():
+        if self.accept_button.on_click():
             width, height = self.window_size_options[self.window_size_index].split(' x ')
             self.main.width = int(width)
             self.main.height = int(height)

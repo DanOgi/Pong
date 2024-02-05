@@ -5,7 +5,6 @@ from options import Options
 import pygame
 
 #TODO Naprawić wymiary obiektów w grze
-#TODO Dodać funkcje on_clicked do klasy Button
 
 class Main():
     def __init__(self) -> None:
@@ -29,6 +28,9 @@ class Main():
             
             pygame.display.flip()
             self.dt = self.time.tick(60)
+
+    def restart_screen_resolution(self):
+        pass
             
 m = Main()
 m.loop()
