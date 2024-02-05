@@ -9,7 +9,7 @@ class Options(Scene):
         super().__init__()
         self.main = main
         pygame.font.init()
-        self.font = pygame.font.Font("Assets/upheavtt.ttf", 32)
+        self.font = pygame.font.Font("Assets/upheavtt.ttf", self.main.font_size)
         self.window_size_text = self.font.render("Window size : ", False, (255, 255, 255))
         self.window_size_rect = self.window_size_text.get_rect()
         self.windows_size_button_left = Button(
@@ -20,7 +20,7 @@ class Options(Scene):
             text_size=32,
             font_family="Assets/upheavtt.ttf"
         )
-        self.windows_size_button_righ = Button(
+        self.windows_size_button_right = Button(
             self.main.window,
             (3*self.main.width/4, self.main.height/2  - self.window_size_rect.centery),
             (32, 32),
@@ -61,28 +61,30 @@ class Options(Scene):
         self.main.window.blit(self.window_size_text, (self.main.width/4, self.main.height/2 - self.window_size_rect.centery))
         self.windows_size_button_left.draw()
         carousel_rect = self.carousel()
-        self.windows_size_button_righ.rect.left = carousel_rect.right
-        self.windows_size_button_righ.draw()
+        self.windows_size_button_right.rect.left = carousel_rect.right
+        self.windows_size_button_right.draw()
         self.accept_button.draw()
 
     def update(self) -> None:
         if self.main.was_resolution_changed:
             self.restart_resolution()
+            self.restat_font_size()
         
         if self.windows_size_button_left.on_click():
             self.window_size_index -= 1
             if self.window_size_index == -1:
                 self.window_size_index = self.window_size_options_len - 1
         
-        if self.windows_size_button_righ.on_click():
+        if self.windows_size_button_right.on_click():
             self.window_size_index += 1
             if self.window_size_index == self.window_size_options_len - 1:
                 self.window_size_index = 0
 
         if self.accept_button.on_press():
-            width, height = WindowResolutionState.get_resolution_from_index(self.window_size_index)
+            width, height, font_size = WindowResolutionState.get_resolution_from_index(self.window_size_index)
             self.main.width = width
             self.main.height = height
+            self.main.font_size = font_size
             self.main.window = pygame.display.set_mode((self.main.width, self.main.height))
 
     def check_events(self) -> None:
@@ -101,9 +103,17 @@ class Options(Scene):
         return text_rect
     
     def restart_resolution(self):
-        self.windows_size_button_left.rect.update(self.main.width/4 + self.window_size_rect.right, self.main.height/2  - self.window_size_rect.centery, 32, 32)
-        self.windows_size_button_righ.rect.update(self.main.width*3/4, self.main.height*3/4, 32, 32)
+        self.window_size_rect.update(self.main.width/4, self.main.height/2 - self.window_size_rect.centery, *self.window_size_text.get_rect().size)
+        self.windows_size_button_left.rect.update(self.main.width/4 + self.window_size_rect.right, self.main.height/2  - self.window_size_rect.centery, self.main.font_size, self.main.font_size)
+        self.windows_size_button_right.rect.update(self.main.width*3/4, self.main.height/2  - self.window_size_rect.centery, self.main.font_size, self.main.font_size)
         self.accept_button.rect.update(self.main.width*3/4, self.main.height*3/4, 100, 50)
     
     def restat_font_size(self):
-        pass
+        self.font = pygame.font.Font("Assets/upheavtt.ttf", self.main.font_size)
+        self.window_size_text = self.font.render("Window size : ", False, (255, 255, 255))
+        self.windows_size_button_left.font = pygame.font.Font(self.windows_size_button_left.font_family, self.main.font_size)
+        self.windows_size_button_right.font = pygame.font.Font(self.windows_size_button_left.font_family, self.main.font_size)
+        self.accept_button.font = pygame.font.Font(self.windows_size_button_left.font_family, self.main.font_size)
+        self.font = pygame.font.Font("Assets/upheavtt.ttf", self.main.font_size)
+        
+

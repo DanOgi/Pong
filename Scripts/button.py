@@ -16,6 +16,7 @@ class Button():
 
         pygame.font.init()
         self.screen = screen
+        self.font_family = font_family
         self.font = pygame.font.Font(font_family, text_size)
         self.rect = pygame.Rect(*pos, *size)
         self.text = text

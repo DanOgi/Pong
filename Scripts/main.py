@@ -9,8 +9,8 @@ import pygame
 
 class Main():
     def __init__(self) -> None:
-        self.width, self.height = WindowResolutionState.RESOLUTION_1280X720
-        self.dwidth, self.dheight = WindowResolutionState.RESOLUTION_1280X720
+        self.width, self.height , self.font_size= WindowResolutionState.RESOLUTION_1280X720
+        self.dwidth, self.dheight, self.dfont_size = WindowResolutionState.RESOLUTION_1280X720
         self.was_resolution_changed = False
         self.window = pygame.display.set_mode((self.width, self.height))
         self.time = pygame.time.Clock()
@@ -27,6 +27,7 @@ class Main():
                 self.was_resolution_changed = True
                 self.dwidth = self.width
                 self.dheight = self.height
+                self.dfont_size = self.font_size
 
             self.window.fill('black')
         
