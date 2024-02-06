@@ -6,6 +6,7 @@ from window_resolution_state import WindowResolutionState
 import pygame
 
 #TODO Naprawić wymiary obiektów w grze
+#TODO Wprowadzić zmiany związane z nową strukturą
 
 class Main():
     def __init__(self) -> None:
