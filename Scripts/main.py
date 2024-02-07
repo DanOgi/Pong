@@ -1,7 +1,6 @@
 import pygame
-from entity import Entity
 from sceneManager import SceneManager
-from scene import *
+from scenes import *
 
 class Main():
     def __init__(self) -> None:
@@ -13,7 +12,9 @@ class Main():
 
         self.sceneManager = SceneManager(self)
         self.sceneManager.add(MainMenu("main_menu"))
-        self.sceneManager.add(Scene("game"))
+        self.sceneManager.add(Game("game"))
+        self.sceneManager.add(Options("options"))
+        self.sceneManager.add(Credits("credits"))
         self.sceneManager.set_curr_scene("main_menu")
 
         self.curr_scene = self.sceneManager.get_curr_scene()
@@ -25,7 +26,7 @@ class Main():
             
             self.curr_scene.check_events()
             self.curr_scene.update()
-            self.curr_scene.draw(self.win)
+            self.curr_scene.draw()
 
             pygame.display.flip()
             self.clk.tick(self.fps)

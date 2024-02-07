@@ -1,5 +1,5 @@
 import pygame
-from scene import Scene
+from scenes import Scene
 
 class SceneManager():
     def __init__(self, main, *scenes: None) -> None:
@@ -10,6 +10,7 @@ class SceneManager():
     def add(self, scene: Scene):
         self.scene_list.append(scene)
         scene.sceneManager = self
+        scene.main = self.main
 
     def remove(self, scene_name):
         for s in self.scene_list:
