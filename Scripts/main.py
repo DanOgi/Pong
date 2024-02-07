@@ -1,46 +1,34 @@
-from game import Game
-from menu import Menu
-from credits import Credits
-from options import Options
-from window_resolution_state import WindowResolutionState
 import pygame
-
-#TODO Naprawić wymiary obiektów w grze
-#TODO Wprowadzić zmiany związane z nową strukturą
+from entity import Entity
+from sceneManager import SceneManager
+from scene import *
 
 class Main():
     def __init__(self) -> None:
-        self.width, self.height , self.font_size= WindowResolutionState.RESOLUTION_1280X720
-        self.dwidth, self.dheight, self.dfont_size = WindowResolutionState.RESOLUTION_1280X720
-        self.was_resolution_changed = False
-        self.window = pygame.display.set_mode((self.width, self.height))
-        self.time = pygame.time.Clock()
-        self.game = Game(self)
-        self.main_menu = Menu(self)
-        self.credits_menu = Credits(self)
-        self.options_menu = Options(self)
-        self.curr_disp = self.main_menu
-        #self.font_size = 32
+        self.win_width = 1280
+        self.win_height = 720
+        self.win = pygame.display.set_mode((self.win_width, self.win_height))
+        self.clk = pygame.time.Clock()
+        self.fps = 60
 
-    def loop(self) -> None:
-        while True:    
-            if self.width != self.dwidth or self.height != self.dheight:
-                self.was_resolution_changed = True
-                self.dwidth = self.width
-                self.dheight = self.height
-                self.dfont_size = self.font_size
+        self.sceneManager = SceneManager(self)
+        self.sceneManager.add(MainMenu("main_menu"))
+        self.sceneManager.add(Scene("game"))
+        self.sceneManager.set_curr_scene("main_menu")
 
-            self.window.fill('black')
-        
-            self.curr_disp.check_events()
-            self.curr_disp.update()
-            self.curr_disp.display()
+        self.curr_scene = self.sceneManager.get_curr_scene()
+    
+    def loop(self):
+        while True:
+            self.curr_scene = self.sceneManager.get_curr_scene()
+            self.win.fill("black")
             
+            self.curr_scene.check_events()
+            self.curr_scene.update()
+            self.curr_scene.draw(self.win)
+
             pygame.display.flip()
-            self.dt = self.time.tick(60)
+            self.clk.tick(self.fps)
 
-            if self.was_resolution_changed:
-                self.was_resolution_changed = False
-            
 m = Main()
 m.loop()
