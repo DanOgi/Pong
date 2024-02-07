@@ -126,10 +126,15 @@ class Game(Scene):
 
         self.entities = pygame.sprite.Group()
 
-        self.text = Text(self.entities, (self.win_size[0]/2, self.win_size[1]/2), "GAME", 64)
+        #self.text = Text(self.entities, (self.win_size[0]/2, self.win_size[1]/2), "GAME", 64)
+
+        self.player = Player(self.entities, (self.win_size[0]*0.02, self.win_size[1]/2), (self.win_size[0]*0.015, self.win_size[1]*0.15))
+        self.enemy = Enemy(self.entities, (self.win_size[0] - self.win_size[0]*0.02, self.win_size[1]/2), (self.win_size[0]*0.015, self.win_size[1]*0.15))
+        self.ball = Ball(self.entities, (self.win_size[0]/2, self.win_size[1]/2), 10)
 
     def update(self):
-        return super().update()
+        super().update()
+        self.entities.update()
     
     def draw(self):
         super().draw()
@@ -142,3 +147,15 @@ class Game(Scene):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    self.player.moving_down = True
+                if event.key == pygame.K_w:
+                    self.player.moving_up = True
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_s:
+                    self.player.moving_down = False
+                if event.key == pygame.K_w:
+                    self.player.moving_up = False

@@ -1,4 +1,5 @@
 import pygame
+import pygame.gfxdraw
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, groups) -> None:
@@ -45,3 +46,54 @@ class Text(pygame.sprite.Sprite):
         self.font = pygame.Font(text_font, text_size)
         self.image = self.font.render(text, True, text_color)
         self.rect = self.image.get_rect(center = pos)
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, groups, pos, size) -> None:
+        super().__init__(groups)
+        self.image = pygame.Surface(size)
+        self.image.fill((255, 255, 255))
+        self.rect = self.image.get_rect(center=pos)
+        self.moving_up = False
+        self.moving_down = False
+        self.speed = 5
+
+        self.win_size = pygame.display.get_window_size()
+
+    def update(self) -> None:
+        super().update()
+        self.rect = self.rect.move(0, (self.moving_down - self.moving_up) * self.speed)
+        if self.rect.top <= 0: self.rect.top = 0
+        if self.rect.bottom >= self.win_size[1]: self.rect.bottom = self.win_size[1]
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, groups, pos, size) -> None:
+        super().__init__(groups)
+        self.image = pygame.Surface(size)
+        self.image.fill((255, 255, 255))
+        self.rect = self.image.get_rect(center=pos)
+        self.moving_up = False
+        self.moving_down = False
+        self.speed = 5
+
+        self.win_size = pygame.display.get_window_size()
+
+    def update(self) -> None:
+        super().update()        
+        self.rect = self.rect.move(0, (self.moving_down - self.moving_up) * self.speed)
+        if self.rect.top <= 0: self.rect.top = 0
+        if self.rect.bottom >= self.win_size[1]: self.rect.bottom = self.win_size[1]
+
+class Ball(pygame.sprite.Sprite):
+    def __init__(self, groups, pos, radius) -> None:
+        super().__init__(groups)
+            
+        self.image = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        self.rect = self.image.get_rect()
+        self.radius = radius
+        pygame.gfxdraw.aacircle(self.image, self.rect.centerx, self.rect.centery, radius-1, (255, 255, 255) )
+        pygame.gfxdraw.filled_circle(self.image, self.rect.centerx, self.rect.centery, radius-1, (255, 255, 255))
+        self.rect.center = pos
+
+
+    def update(self) -> None:
+        super().update()
