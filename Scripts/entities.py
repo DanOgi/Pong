@@ -74,8 +74,14 @@ class Carousele():
         self.text = Text(self.entities, pos, "1280 x 720", text_size)
         self.right_button = Button(self.entities, [0, 0], ">", text_size)
         self.left_button = Button(self.entities, [0, 0], "<", text_size)
+        
+        self.right_button.rect.centery = self.text.rect.centery
+        self.left_button.rect.centery = self.text.rect.centery
+        
         self.right_button.rect.left = self.text.rect.right
         self.left_button.rect.right = self.text.rect.left
+    def draw(self, win):
+        self.entities.draw(win)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, groups, pos, size) -> None:

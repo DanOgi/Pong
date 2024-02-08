@@ -83,8 +83,7 @@ class Options(Scene):
         self.win_size = pygame.display.get_window_size()
 
         self.entities = pygame.sprite.Group()
-        
-        #self.text = Text(self.entities, (self.win_size[0]/2, self.win_size[1]/2), "OPTIONS", 64)
+        self.carousele = Carousele((self.win_size[0]/2, self.win_size[1]/2), 32)
 
     def update(self):
         super().update()
@@ -92,6 +91,7 @@ class Options(Scene):
     def draw(self):
         super().draw()
         self.entities.draw(self.win)
+        self.carousele.draw(self.win)
     
     def check_events(self):
         super().check_events()
