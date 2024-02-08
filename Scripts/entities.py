@@ -1,3 +1,4 @@
+from typing import Any
 import pygame
 import pygame.gfxdraw
 import random 
@@ -18,7 +19,7 @@ class Button(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = pos)
         self.clicked = False
 
-    def update(self) -> None:
+    def update(self, **kwargs) -> None:
         super().update()
         if not pygame.mouse.get_pressed()[0] and self.clicked:
             self.clicked = False        
@@ -44,10 +45,26 @@ class Text(pygame.sprite.Sprite):
     def __init__(self, groups, pos, text = "Text", text_size = 20, text_font = None, text_color = (255, 255, 255)) -> None:
         super().__init__(groups)
         pygame.font.init()
-        self.font = pygame.Font(text_font, text_size)
-        self.image = self.font.render(text, True, text_color)
+
+        self.pos = pos
+        self.text = text
+        self.text_size = text_size
+        self.text_font = text_font
+        self.text_color = text_color
+
+        self.font = pygame.Font(self.text_font, self.text_size)
+        self.image = self.font.render(self.text, True, self.text_color)
         self.rect = self.image.get_rect(center = pos)
 
+    def update(self, **kwargs) -> None:
+        super().update()
+        self.image = self.font.render(self.text, True, self.text_color)
+        self.rect = self.image.get_rect(center = self.pos)
+
+
+    def set_text(self, text):
+        self.text = text
+    
 class Player(pygame.sprite.Sprite):
     def __init__(self, groups, pos, size) -> None:
         super().__init__(groups)
@@ -61,7 +78,7 @@ class Player(pygame.sprite.Sprite):
 
         self.win_size = pygame.display.get_window_size()
 
-    def update(self) -> None:
+    def update(self, **kwargs) -> None:
         super().update()
         self.rect = self.rect.move(0, (self.moving_down - self.moving_up) * self.speed)
         if self.rect.top <= 0: self.rect.top = 0
@@ -87,7 +104,7 @@ class Enemy(pygame.sprite.Sprite):
 
         self.game_state = game_state
 
-    def update(self) -> None:
+    def update(self, **kwargs) -> None:
         super().update()        
         self.rect = self.rect.move(0, (self.moving_down - self.moving_up) * self.speed)
         if self.rect.top <= 0: self.rect.top = 0
@@ -167,7 +184,7 @@ class Ball(pygame.sprite.Sprite):
         
         self.win_size = pygame.display.get_window_size()
 
-    def update(self) -> None:
+    def update(self, **kwargs) -> None:
         super().update()
         from scenes import GameState
         

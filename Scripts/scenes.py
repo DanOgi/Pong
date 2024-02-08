@@ -144,12 +144,17 @@ class Game(Scene):
         self.player_points = 0
         self.enemy_points = 0
 
+        self.player_points_text = Text(self.entities, (self.win_size[0]/4, self.win_size[1]/4), str(self.player_points), 128, None, (150, 150, 150))
+        self.enemy_points_text = Text(self.entities, (3*self.win_size[0]/4, self.win_size[1]/4), str(self.enemy_points), 128, None, (150, 150, 150))
+
     def update(self):
         super().update()
         
         self.entities.update()
         self.ball.set_game_state(self.game_state)
         self.enemy.set_game_state(self.game_state)
+        self.player_points_text.set_text(str(self.player_points))
+        self.enemy_points_text.set_text(str(self.enemy_points))
 
         match self.game_state:
             case GameState.BALL_IN_GAME:
@@ -169,10 +174,10 @@ class Game(Scene):
             case GameState.ENEMY_GETS_POINT:
                 self.enemy_points += 1
                 self.game_state = GameState.PLAYER_START
-
-        print(f"{self.ball.moving_down}, {self.ball.moving_up}, {self.ball.moving_right}, {self.ball.moving_left}")
+    
     def draw(self):
         super().draw()
+        pygame.draw.aaline(self.win, (150, 150, 150), (self.win_size[0]/2, 0), (self.win_size[0]/2, self.win_size[1]))
         self.entities.draw(self.win)
 
     def check_events(self):
