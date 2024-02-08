@@ -1,7 +1,6 @@
-from typing import Any
 import pygame
 import pygame.gfxdraw
-import random 
+import random
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, groups) -> None:
@@ -63,8 +62,21 @@ class Text(pygame.sprite.Sprite):
 
 
     def set_text(self, text):
-        self.text = text
+        self.text = text  
+
+    def get_size(self):
+        return self.image.get_size()
     
+class Carousele():
+    def __init__(self, pos, text_size) -> None:
+        self.entities = pygame.sprite.Group()
+
+        self.text = Text(self.entities, pos, "1280 x 720", text_size)
+        self.right_button = Button(self.entities, [0, 0], ">", text_size)
+        self.left_button = Button(self.entities, [0, 0], "<", text_size)
+        self.right_button.rect.left = self.text.rect.right
+        self.left_button.rect.right = self.text.rect.left
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, groups, pos, size) -> None:
         super().__init__(groups)

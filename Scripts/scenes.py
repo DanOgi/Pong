@@ -38,12 +38,12 @@ class MainMenu(Scene):
         self.win = pygame.display.get_surface()
         self.win_size = pygame.display.get_window_size()
 
-        self.new_game_button = Button(self.entities, (self.win_size[0]/2, self.win_size[1]/2), "New Game")
-        self.options_button = Button(self.entities, (self.win_size[0]/2, self.win_size[1]/2 + self.new_game_button.get_size()[1]), "Options")
-        self.credits_button = Button(self.entities, (self.win_size[0]/2, self.win_size[1]/2 + 2*self.options_button.get_size()[1]), "Credits")
-        self.exit_button = Button(self.entities, (self.win_size[0]/2, self.win_size[1]/2 + 3*self.credits_button.get_size()[1]), "Exit")
+        self.new_game_button = Button(self.entities, (self.win_size[0]/2, self.win_size[1]/2), "New Game", 64)
+        self.options_button = Button(self.entities, (self.win_size[0]/2, self.win_size[1]/2 + self.new_game_button.get_size()[1]), "Options", 64)
+        self.credits_button = Button(self.entities, (self.win_size[0]/2, self.win_size[1]/2 + 2*self.options_button.get_size()[1]), "Credits", 64)
+        self.exit_button = Button(self.entities, (self.win_size[0]/2, self.win_size[1]/2 + 3*self.credits_button.get_size()[1]), "Exit", 64)
 
-        self.menu_text = Text(self.entities, (self.win_size[0]/2, self.win_size[1]/2 - 50), "PONG", 64)
+        self.menu_text = Text(self.entities, (self.win_size[0]/2, self.new_game_button.rect.top - self.win_size[1]/5), "PONG", 128)
     
     def update(self):
         super().update()
@@ -84,7 +84,7 @@ class Options(Scene):
 
         self.entities = pygame.sprite.Group()
         
-        self.text = Text(self.entities, (self.win_size[0]/2, self.win_size[1]/2), "OPTIONS", 64)
+        #self.text = Text(self.entities, (self.win_size[0]/2, self.win_size[1]/2), "OPTIONS", 64)
 
     def update(self):
         super().update()
@@ -100,6 +100,7 @@ class Options(Scene):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
 
 class Credits(Scene):
 
