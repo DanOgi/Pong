@@ -1,6 +1,14 @@
 import pygame
 import sys
+from enum import Enum
 from entities import *
+
+class GameState(Enum):
+    PLAYER_START = 0
+    PLAYER_GETS_POINT = 1
+    ENEMY_START = 2
+    ENEMY_GETS_POINT = 3
+    BALL_IN_GAME = 4
 
 class Scene():
     
@@ -121,21 +129,48 @@ class Credits(Scene):
 class Game(Scene):
     def __init__(self, name: str) -> None:
         super().__init__(name)
+        
         self.win = pygame.display.get_surface()
         self.win_size = pygame.display.get_window_size()
 
         self.entities = pygame.sprite.Group()
-
+        self.game_state = GameState.PLAYER_START
         #self.text = Text(self.entities, (self.win_size[0]/2, self.win_size[1]/2), "GAME", 64)
 
         self.player = Player(self.entities, (self.win_size[0]*0.02, self.win_size[1]/2), (self.win_size[0]*0.015, self.win_size[1]*0.15))
-        self.enemy = Enemy(self.entities, (self.win_size[0] - self.win_size[0]*0.02, self.win_size[1]/2), (self.win_size[0]*0.015, self.win_size[1]*0.15))
-        self.ball = Ball(self.entities, (self.win_size[0]/2, self.win_size[1]/2), 10)
+        self.enemy = Enemy(self.entities, (self.win_size[0] - self.win_size[0]*0.02, self.win_size[1]/2), (self.win_size[0]*0.015, self.win_size[1]*0.15), self.game_state)
+        self.ball = Ball(self.entities, (self.win_size[0]/2, self.win_size[1]/2), 10, self.player, self.enemy, self.game_state)
+
+        self.player_points = 0
+        self.enemy_points = 0
 
     def update(self):
         super().update()
+        
         self.entities.update()
-    
+        self.ball.set_game_state(self.game_state)
+        self.enemy.set_game_state(self.game_state)
+
+        match self.game_state:
+            case GameState.BALL_IN_GAME:
+                if self.ball.rect.left <= 0:
+                    self.game_state = GameState.ENEMY_GETS_POINT
+                if self.ball.rect.right >= self.win_size[0]:
+                    self.game_state = GameState.PLAYER_GETS_POINT
+                self.enemy.move(self.ball)
+            case GameState.PLAYER_START:
+                pass
+            case GameState.PLAYER_GETS_POINT:
+                self.player_points += 1
+                self.game_state = GameState.ENEMY_START
+            case GameState.ENEMY_START:
+                if self.enemy.shot(self.ball):
+                    self.game_state = GameState.BALL_IN_GAME
+            case GameState.ENEMY_GETS_POINT:
+                self.enemy_points += 1
+                self.game_state = GameState.PLAYER_START
+
+        print(f"{self.ball.moving_down}, {self.ball.moving_up}, {self.ball.moving_right}, {self.ball.moving_left}")
     def draw(self):
         super().draw()
         self.entities.draw(self.win)
@@ -153,6 +188,10 @@ class Game(Scene):
                     self.player.moving_down = True
                 if event.key == pygame.K_w:
                     self.player.moving_up = True
+                if event.key == pygame.K_SPACE:
+                    if self.game_state == GameState.PLAYER_START:
+                        self.game_state = GameState.BALL_IN_GAME
+                        self.player.shot(self.ball)
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_s:

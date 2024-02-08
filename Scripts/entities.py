@@ -1,5 +1,6 @@
 import pygame
 import pygame.gfxdraw
+import random 
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, groups) -> None:
@@ -50,6 +51,7 @@ class Text(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self, groups, pos, size) -> None:
         super().__init__(groups)
+
         self.image = pygame.Surface(size)
         self.image.fill((255, 255, 255))
         self.rect = self.image.get_rect(center=pos)
@@ -65,8 +67,14 @@ class Player(pygame.sprite.Sprite):
         if self.rect.top <= 0: self.rect.top = 0
         if self.rect.bottom >= self.win_size[1]: self.rect.bottom = self.win_size[1]
 
+    def shot(self, ball):
+        ball.moving_right = True
+        ball.moving_left = False
+        ball.moving_up = self.moving_up
+        ball.moving_down = self.moving_down
+
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, groups, pos, size) -> None:
+    def __init__(self, groups, pos, size, game_state) -> None:
         super().__init__(groups)
         self.image = pygame.Surface(size)
         self.image.fill((255, 255, 255))
@@ -76,6 +84,8 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = 5
 
         self.win_size = pygame.display.get_window_size()
+
+        self.game_state = game_state
 
     def update(self) -> None:
         super().update()        
@@ -83,10 +93,63 @@ class Enemy(pygame.sprite.Sprite):
         if self.rect.top <= 0: self.rect.top = 0
         if self.rect.bottom >= self.win_size[1]: self.rect.bottom = self.win_size[1]
 
+        from scenes import GameState
+        match self.game_state:
+            case GameState.BALL_IN_GAME:
+                pass
+            case GameState.PLAYER_START:
+                self.rect.centery = self.win_size[1]/2
+            case GameState.PLAYER_GETS_POINT:
+                self.moving_down = False
+                self.moving_up = False
+            case GameState.ENEMY_START:
+                self.rect.centery = self.win_size[1]/2
+            case GameState.ENEMY_GETS_POINT:
+                self.moving_down = False
+                self.moving_up = False
+    
+    def move(self, ball):
+        if self.rect.centery - ball.rect.centery > 0:
+            self.moving_up = True
+            self.moving_down = False
+        elif self.rect.centery - ball.rect.centery < 0:
+            self.moving_up = False
+            self.moving_down = True
+        else:
+            self.moving_up = False
+            self.moving_down = False
+    
+    def set_game_state(self, game_state):
+        self.game_state = game_state
+
+    def shot(self, ball):
+        rnd = random.randint(0, 2)
+        match rnd:
+            case 0:
+                ball.moving_left = True
+                ball.moving_up = False
+                ball.moving_down = False
+                ball.moving_right = False
+            case 1:
+                ball.moving_left = True
+                ball.moving_up = False
+                ball.moving_down = True
+                ball.moving_right = False
+            case 2:
+                ball.moving_left = True
+                ball.moving_up = True
+                ball.moving_down = False
+                ball.moving_right = False
+        return True
+
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, groups, pos, radius) -> None:
+    def __init__(self, groups, pos, radius, player, enemy, game_state) -> None:
         super().__init__(groups)
-            
+        
+        self.player = player
+        self.enemy = enemy
+        self.game_state = game_state
+
         self.image = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
         self.radius = radius
@@ -94,6 +157,58 @@ class Ball(pygame.sprite.Sprite):
         pygame.gfxdraw.filled_circle(self.image, self.rect.centerx, self.rect.centery, radius-1, (255, 255, 255))
         self.rect.center = pos
 
+        self.moving_up = False
+        self.moving_down = False
+        self.moving_left = False
+        self.moving_right = False
+        self.moving_vect = pygame.math.Vector2(0, 0)
+
+        self.speed = 5
+        
+        self.win_size = pygame.display.get_window_size()
 
     def update(self) -> None:
         super().update()
+        from scenes import GameState
+        
+        match self.game_state:
+            case GameState.BALL_IN_GAME:
+                self.colision()
+                self.moving_vect = pygame.math.Vector2((self.moving_right - self.moving_left), (self.moving_down - self.moving_up))
+            case GameState.PLAYER_START:
+                self.rect.left = self.player.rect.right
+                self.rect.centery = self.player.rect.centery 
+            case GameState.ENEMY_START:
+                self.rect.right = self.enemy.rect.left
+                self.rect.centery = self.enemy.rect.centery 
+            case GameState.PLAYER_GETS_POINT:
+                self.moving_vect = pygame.math.Vector2(0, 0)
+                self.speed = 5
+            case GameState.ENEMY_GETS_POINT:
+                self.moving_vect = pygame.math.Vector2(0, 0)
+                self.speed = 5
+
+        if self.moving_vect.length() > 0: self.moving_vect = self.moving_vect.normalize()
+        self.rect = self.rect.move(self.moving_vect*self.speed)
+
+    def colision(self) -> None:
+        if self.rect.colliderect(self.player.rect) and self.moving_left:
+            self.moving_left = False
+            self.moving_right = True
+            self.speed += 1
+        
+        if self.rect.colliderect(self.enemy.rect) and self.moving_right:
+            self.moving_left = True
+            self.moving_right = False
+            self.speed += 1
+
+        if self.moving_down and self.rect.bottom >= self.win_size[1]:
+            self.moving_down = False
+            self.moving_up = True
+
+        if self.moving_up and self.rect.top <= 0:
+            self.moving_down = True
+            self.moving_up = False
+
+    def set_game_state(self, game_state):
+        self.game_state = game_state
