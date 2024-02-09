@@ -13,6 +13,7 @@ class SceneManager():
         scene.sceneManager = self
         scene.main = self.main
         scene.win_manager = self.win_manager
+        scene.win_size = self.win_manager.get_win_size()
 
     def remove(self, scene_name):
         for s in self.scene_list:

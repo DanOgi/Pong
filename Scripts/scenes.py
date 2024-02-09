@@ -12,32 +12,34 @@ class GameState(Enum):
 
 class Scene():
     
-    def __init__(self, name: str) -> None:
+    def __init__(self, name, main: str) -> None:
         self.name = name
-        self.sceneManager = None
-        self.main = None
-        self.win_manager = None
+        self.main = main
+        self.sceneManager = self.main.sceneManager
+        self.win_manager = self.main.win_manager
+        self.win = self.win_manager.get_win_surf()
+        self.win_size = self.win_manager.get_win_size()
+
+        self.entities = pygame.sprite.Group()
 
     def __eq__(self, other: object) -> bool:
         return self.name == other.name
 
     def update(self):
-        pass
+        self.win = self.win_manager.get_win_surf()
+        self.win_size = self.win_manager.get_win_size()
+        self.entities.update()
 
     def draw(self):
-        pass
+        self.entities.draw(self.win)
 
     def check_events(self):
         pass
 
 class MainMenu(Scene):
 
-    def __init__(self, name: str) -> None:
-        super().__init__(name)
-        self.entities = pygame.sprite.Group()
-        
-        self.win = pygame.display.get_surface()
-        self.win_size = pygame.display.get_window_size()
+    def __init__(self, name: str, main) -> None:
+        super().__init__(name, main)
 
         self.new_game_button = Button(self.entities, (self.win_size[0]/2, self.win_size[1]/2), "New Game", 64)
         self.options_button = Button(self.entities, (self.win_size[0]/2, self.win_size[1]/2 + self.new_game_button.get_size()[1]), "Options", 64)
@@ -48,12 +50,9 @@ class MainMenu(Scene):
     
     def update(self):
         super().update()
-        self.win_size = pygame.display.get_window_size()
-        self.entities.update()
     
     def draw(self):
         super().draw()
-        self.entities.draw(self.win)
     
     def check_events(self):
         super().check_events()
@@ -77,19 +76,12 @@ class MainMenu(Scene):
                 sys.exit()
 
 class Options(Scene):
-    def __init__(self, name: str) -> None:
-        super().__init__(name)
+    def __init__(self, name: str, main) -> None:
+        super().__init__(name, main)
 
-        self.win = pygame.display.get_surface()
-        self.win_size = pygame.display.get_window_size()
-
-        self.entities = pygame.sprite.Group()
         self.carousele = Carousele((self.win_size[0]/2, self.win_size[1]/2), 32)
-        self.win_res_text = Text(self.entities, (0, 0), "Resolution: ", 32)
+        self.win_res_text = Text(self.entities, (self.win_manager.HALF_SCREEN_WIDHT - self.carousele.get_size()[0], self.win_manager.HALF_SCREEN_HEIGHT), "Resolution: ", 32)
         self.accept_button = Button(self.entities, (self.win_size[0]*3/4, self.win_size[1]*3/4), "Accept", 32)
-
-        self.win_res_text.rect.right = self.carousele.left_button.rect.left
-        self.win_res_text.rect.centery = self.carousele.left_button.rect.centery
         
     def update(self):
         super().update()
@@ -98,7 +90,6 @@ class Options(Scene):
     
     def draw(self):
         super().draw()
-        self.entities.draw(self.win)
         self.carousele.draw(self.win)
     
     def check_events(self):
@@ -117,7 +108,6 @@ class Options(Scene):
         if self.accept_button.is_clicked_once():
             pygame.display.set_mode((self.carousele.resolution_values[self.carousele.index]))
 
-        print(self.accept_button.is_clicked_once())
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -127,21 +117,14 @@ class Options(Scene):
                 if event.key == pygame.K_ESCAPE:
                     self.sceneManager.set_curr_scene("main_menu")
 
-
 class Credits(Scene):
 
-    def __init__(self, name: str) -> None:
-        super().__init__(name)
-        self.win = pygame.display.get_surface()
-        self.win_size = pygame.display.get_window_size()
-
-        self.entities = pygame.sprite.Group()
-
+    def __init__(self, name: str, main) -> None:
+        super().__init__(name, main)
         self.text = Text(self.entities, (self.win_size[0]/2, self.win_size[1]/2), "Game created by Daniel Ogorzałek", 64)
 
     def draw(self):
         super().draw()
-        self.entities.draw(self.win)
     
     def update(self):
         super().update()
@@ -154,15 +137,10 @@ class Credits(Scene):
                 sys.exit()
     
 class Game(Scene):
-    def __init__(self, name: str) -> None:
-        super().__init__(name)
+    def __init__(self, name: str, main) -> None:
+        super().__init__(name, main)
         
-        self.win = pygame.display.get_surface()
-        self.win_size = pygame.display.get_window_size()
-
-        self.entities = pygame.sprite.Group()
         self.game_state = GameState.PLAYER_START
-        #self.text = Text(self.entities, (self.win_size[0]/2, self.win_size[1]/2), "GAME", 64)
 
         self.player = Player(self.entities, (self.win_size[0]*0.02, self.win_size[1]/2), (self.win_size[0]*0.015, self.win_size[1]*0.15))
         self.enemy = Enemy(self.entities, (self.win_size[0] - self.win_size[0]*0.02, self.win_size[1]/2), (self.win_size[0]*0.015, self.win_size[1]*0.15), self.game_state)
@@ -176,8 +154,6 @@ class Game(Scene):
 
     def update(self):
         super().update()
-        
-        self.entities.update()
         self.ball.set_game_state(self.game_state)
         self.enemy.set_game_state(self.game_state)
         self.player_points_text.set_text(str(self.player_points))
@@ -205,7 +181,6 @@ class Game(Scene):
     def draw(self):
         super().draw()
         pygame.draw.aaline(self.win, (150, 150, 150), (self.win_size[0]/2, 0), (self.win_size[0]/2, self.win_size[1]))
-        self.entities.draw(self.win)
 
     def check_events(self):
         super().check_events()

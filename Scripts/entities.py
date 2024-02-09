@@ -124,6 +124,10 @@ class Carousele():
         self.right_button.update()
         self.text.update()
     
+    def get_size(self):
+        return [self.right_button.get_size()[0] + self.left_button.get_size()[0] + self.text.get_size()[0],
+                self.right_button.get_size()[1] + self.left_button.get_size()[1] + self.text.get_size()[1]]
+    
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, groups, pos, size) -> None:
