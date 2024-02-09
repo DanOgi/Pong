@@ -84,9 +84,15 @@ class Options(Scene):
 
         self.entities = pygame.sprite.Group()
         self.carousele = Carousele((self.win_size[0]/2, self.win_size[1]/2), 32)
+        self.win_res_text = Text(self.entities, (0, 0), "Resolution: ", 32)
+        self.accept_button = Button(self.entities, (self.win_size[0]*3/4, self.win_size[1]*3/4), "Accept", 32)
 
+        self.win_res_text.rect.right = self.carousele.left_button.rect.left
+        self.win_res_text.rect.centery = self.carousele.left_button.rect.centery
+        
     def update(self):
         super().update()
+        self.carousele.update()
     
     def draw(self):
         super().draw()
@@ -95,6 +101,19 @@ class Options(Scene):
     
     def check_events(self):
         super().check_events()
+        if self.carousele.left_button.is_clicked_once():
+            self.carousele.index -= 1
+            if self.carousele.index == -1:
+                self.carousele.index = self.carousele.resolution_list_len - 1
+
+        if self.carousele.right_button.is_clicked_once():
+            if self.carousele.index == self.carousele.resolution_list_len -1:
+                self.carousele.index = 0
+            else:
+                self.carousele.index += 1
+
+        if self.accept_button.is_clicked_once():
+            pygame.display.set_mode((self.carousele.resolution_values[self.carousele.index]))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

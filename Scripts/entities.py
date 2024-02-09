@@ -80,8 +80,50 @@ class Carousele():
         
         self.right_button.rect.left = self.text.rect.right
         self.left_button.rect.right = self.text.rect.left
+
+        self.resolution_list = [
+            "640 x 480",
+            "800 x 600",
+            "1024 x 768",
+            "1280 x 780",   
+            "1280 x 1024",
+            "1360 x 768",
+            "1440 x 900",
+            "1600 x 900",
+            "1600 x 1200",
+            "1920 x 1080",
+        ]
+        self.resolution_values = [
+            (640, 480),
+            (800, 600),
+            (1024, 768),
+            (1280, 780),
+            (1280, 1024),
+            (1360, 768),
+            (1440, 900),
+            (1600, 900),
+            (1600, 1200),
+            (1920, 1080)
+        ]
+        self.resolution_list_len = len(self.resolution_list)
+        self.index = 3
+    
     def draw(self, win):
         self.entities.draw(win)
+
+    def update(self):
+        self.text.set_text(self.resolution_list[self.index])
+        
+        self.right_button.rect.centery = self.text.rect.centery
+        self.left_button.rect.centery = self.text.rect.centery
+
+        self.right_button.rect.left = self.text.rect.right
+        self.left_button.rect.right = self.text.rect.left
+
+        self.left_button.update()
+        self.right_button.update()
+        self.text.update()
+    
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, groups, pos, size) -> None:
