@@ -16,6 +16,7 @@ class Scene():
         self.name = name
         self.sceneManager = None
         self.main = None
+        self.win_manager = None
 
     def __eq__(self, other: object) -> bool:
         return self.name == other.name
@@ -93,6 +94,7 @@ class Options(Scene):
     def update(self):
         super().update()
         self.carousele.update()
+        self.accept_button.update()
     
     def draw(self):
         super().draw()
@@ -115,10 +117,15 @@ class Options(Scene):
         if self.accept_button.is_clicked_once():
             pygame.display.set_mode((self.carousele.resolution_values[self.carousele.index]))
 
+        print(self.accept_button.is_clicked_once())
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.sceneManager.set_curr_scene("main_menu")
 
 
 class Credits(Scene):

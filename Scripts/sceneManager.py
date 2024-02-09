@@ -6,11 +6,13 @@ class SceneManager():
         self.main = main
         self.scene_list = list(*scenes)
         self.curr_scene = None
+        self.win_manager = self.main.win_manager
 
     def add(self, scene: Scene):
         self.scene_list.append(scene)
         scene.sceneManager = self
         scene.main = self.main
+        scene.win_manager = self.win_manager
 
     def remove(self, scene_name):
         for s in self.scene_list:

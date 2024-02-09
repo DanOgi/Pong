@@ -1,12 +1,15 @@
 import pygame
 from sceneManager import SceneManager
+from windowManager import WindowManager
 from scenes import *
 
 class Main():
     def __init__(self) -> None:
-        self.win_width = 1280
-        self.win_height = 720
-        self.win = pygame.display.set_mode((self.win_width, self.win_height))
+        # self.win_width = 1280
+        # self.win_height = 720
+        # self.win = pygame.display.set_mode((self.win_width, self.win_height))
+        self.win_manager = WindowManager(self)
+        self.win = self.win_manager.get_win_surf()
         self.clk = pygame.time.Clock()
         self.fps = 60
 
@@ -21,6 +24,7 @@ class Main():
     
     def loop(self):
         while True:
+            self.win = self.win_manager.get_win_surf()
             self.curr_scene = self.sceneManager.get_curr_scene()
             self.win.fill("black")
             
