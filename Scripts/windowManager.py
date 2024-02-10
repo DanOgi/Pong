@@ -14,10 +14,10 @@ class WindowManager():
     def create_win(self):
         self.win_surf = pygame.display.set_mode((self.SCREEN_WIDHT, self.SCREEN_HEIGHT))
         return self.win_surf
-    
+
     def get_win_surf(self):
         return self.win_surf
-    
+
     def change_win_size(self, widht, height):
         self.SCREEN_WIDHT = widht
         self.SCREEN_HEIGHT = height

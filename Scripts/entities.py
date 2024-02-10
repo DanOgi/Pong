@@ -1,34 +1,71 @@
+from typing import Any
 import pygame
-import pygame.gfxdraw
-import random
 
 class Entity(pygame.sprite.Sprite):
-    def __init__(self, groups) -> None:
+    def __init__(self, groups, scene) -> None:
         super().__init__(groups)
+        self.scene = scene
+        self.scene_manager = self.scene.scene_manager
+        self.window_manager = self.scene.window_manager
+        
+        self.image = pygame.Surface((0 ,0))
+        self.rect = self.image.get_rect(topleft = (0, 0))
 
-class Button(pygame.sprite.Sprite):
-    def __init__(self, groups, pos, text = "Click", text_size = 20, text_font = None, text_color = (255, 255, 255)) -> None:
-        super().__init__(groups)
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        super().update(*args, **kwargs)
+
+    def change_pos_to(self, **kwargs):
+        self.rect = self.rect.move_to(**kwargs)
+        self.pos = list(self.rect.topleft)
+
+    def change_pos_by(self, pos):
+        self.pos[0] = self.pos[0] + pos[0]
+        self.pos[1] = self.pos[1] + pos[1]
+        self.rect = self.rect.move(*pos)
+
+class Text(Entity):
+    def __init__(self, groups, scene, text="Text", text_color = (255, 255, 255), pos = [0, 0]) -> None:
+        super().__init__(groups, scene)
         pygame.font.init()
-        self.text_size = text_size
-        self.text_font = text_font
+        
+        self.text = text
         self.text_color = text_color
-        self.font = pygame.font.Font(self.text_font, self.text_size)
-        self.image = self.font.render(text, True, self.text_color)
-        self.rect = self.image.get_rect(center = pos)
+
+        self.pos = pos
+
+        self.font = pygame.Font()
+        self.image = self.font.render(self.text, True, self.text_color)
+        self.rect = self.image.get_rect(topleft = self.pos)
+
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        super().update(*args, **kwargs)
+
+class Button(Entity):
+    def __init__(self, groups, scene, text="Click", text_color = (255, 255, 255), pos = [0, 0]) -> None:
+        super().__init__(groups, scene)
+        pygame.font.init()
+
+        self.text = text
+        self.text_color = text_color
+
+        self.pos = pos
+
+        self.font = pygame.Font()
+        self.image = self.font.render(self.text, True, self.text_color)
+        self.rect = self.image.get_rect(topleft = self.pos)
         self.clicked = False
 
-    def update(self, **kwargs) -> None:
-        super().update()
-        if not pygame.mouse.get_pressed()[0] and self.clicked:
-            self.clicked = False        
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        super().update(*args, **kwargs)
+        if self.clicked and not pygame.mouse.get_pressed()[0]:
+            self.clicked = False
 
     def is_cursore_over(self):
         mx, my = pygame.mouse.get_pos()
         if self.rect.collidepoint(mx, my):
             return True
         return False 
-
+    
     def is_clicked_once(self):
         if self.is_cursore_over():
             if pygame.mouse.get_pressed()[0] and not self.clicked:
@@ -36,260 +73,3 @@ class Button(pygame.sprite.Sprite):
                 return True
             return False
         return False
-    
-    def get_size(self):
-        return self.image.get_size()
-    
-class Text(pygame.sprite.Sprite):
-    def __init__(self, groups, pos, text = "Text", text_size = 20, text_font = None, text_color = (255, 255, 255)) -> None:
-        super().__init__(groups)
-        pygame.font.init()
-
-        self.pos = pos
-        self.text = text
-        self.text_size = text_size
-        self.text_font = text_font
-        self.text_color = text_color
-
-        self.font = pygame.Font(self.text_font, self.text_size)
-        self.image = self.font.render(self.text, True, self.text_color)
-        self.rect = self.image.get_rect(center = pos)
-
-    def update(self, **kwargs) -> None:
-        super().update()
-        self.image = self.font.render(self.text, True, self.text_color)
-        self.rect = self.image.get_rect(center = self.pos)
-
-
-    def set_text(self, text):
-        self.text = text  
-
-    def get_size(self):
-        return self.image.get_size()
-    
-class Carousele():
-    def __init__(self, pos, text_size) -> None:
-        self.entities = pygame.sprite.Group()
-
-        self.text = Text(self.entities, pos, "1280 x 720", text_size)
-        self.right_button = Button(self.entities, [0, 0], ">", text_size)
-        self.left_button = Button(self.entities, [0, 0], "<", text_size)
-        
-        self.right_button.rect.centery = self.text.rect.centery
-        self.left_button.rect.centery = self.text.rect.centery
-        
-        self.right_button.rect.left = self.text.rect.right
-        self.left_button.rect.right = self.text.rect.left
-
-        self.resolution_list = [
-            "640 x 480",
-            "800 x 600",
-            "1024 x 768",
-            "1280 x 780",   
-            "1280 x 1024",
-            "1360 x 768",
-            "1440 x 900",
-            "1600 x 900",
-            "1600 x 1200",
-            "1920 x 1080",
-        ]
-        self.resolution_values = [
-            (640, 480),
-            (800, 600),
-            (1024, 768),
-            (1280, 780),
-            (1280, 1024),
-            (1360, 768),
-            (1440, 900),
-            (1600, 900),
-            (1600, 1200),
-            (1920, 1080)
-        ]
-        self.resolution_list_len = len(self.resolution_list)
-        self.index = 3
-    
-    def draw(self, win):
-        self.entities.draw(win)
-
-    def update(self):
-        self.text.set_text(self.resolution_list[self.index])
-        
-        self.right_button.rect.centery = self.text.rect.centery
-        self.left_button.rect.centery = self.text.rect.centery
-
-        self.right_button.rect.left = self.text.rect.right
-        self.left_button.rect.right = self.text.rect.left
-
-        self.left_button.update()
-        self.right_button.update()
-        self.text.update()
-    
-    def get_size(self):
-        return [self.right_button.get_size()[0] + self.left_button.get_size()[0] + self.text.get_size()[0],
-                self.right_button.get_size()[1] + self.left_button.get_size()[1] + self.text.get_size()[1]]
-    
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self, groups, pos, size) -> None:
-        super().__init__(groups)
-
-        self.image = pygame.Surface(size)
-        self.image.fill((255, 255, 255))
-        self.rect = self.image.get_rect(center=pos)
-        self.moving_up = False
-        self.moving_down = False
-        self.speed = 5
-
-        self.win_size = pygame.display.get_window_size()
-
-    def update(self, **kwargs) -> None:
-        super().update()
-        self.rect = self.rect.move(0, (self.moving_down - self.moving_up) * self.speed)
-        if self.rect.top <= 0: self.rect.top = 0
-        if self.rect.bottom >= self.win_size[1]: self.rect.bottom = self.win_size[1]
-
-    def shot(self, ball):
-        ball.moving_right = True
-        ball.moving_left = False
-        ball.moving_up = self.moving_up
-        ball.moving_down = self.moving_down
-
-class Enemy(pygame.sprite.Sprite):
-    def __init__(self, groups, pos, size, game_state) -> None:
-        super().__init__(groups)
-        self.image = pygame.Surface(size)
-        self.image.fill((255, 255, 255))
-        self.rect = self.image.get_rect(center=pos)
-        self.moving_up = False
-        self.moving_down = False
-        self.speed = 5
-
-        self.win_size = pygame.display.get_window_size()
-
-        self.game_state = game_state
-
-    def update(self, **kwargs) -> None:
-        super().update()        
-        self.rect = self.rect.move(0, (self.moving_down - self.moving_up) * self.speed)
-        if self.rect.top <= 0: self.rect.top = 0
-        if self.rect.bottom >= self.win_size[1]: self.rect.bottom = self.win_size[1]
-
-        from scenes import GameState
-        match self.game_state:
-            case GameState.BALL_IN_GAME:
-                pass
-            case GameState.PLAYER_START:
-                self.rect.centery = self.win_size[1]/2
-            case GameState.PLAYER_GETS_POINT:
-                self.moving_down = False
-                self.moving_up = False
-            case GameState.ENEMY_START:
-                self.rect.centery = self.win_size[1]/2
-            case GameState.ENEMY_GETS_POINT:
-                self.moving_down = False
-                self.moving_up = False
-    
-    def move(self, ball):
-        if self.rect.centery - ball.rect.centery > 0:
-            self.moving_up = True
-            self.moving_down = False
-        elif self.rect.centery - ball.rect.centery < 0:
-            self.moving_up = False
-            self.moving_down = True
-        else:
-            self.moving_up = False
-            self.moving_down = False
-    
-    def set_game_state(self, game_state):
-        self.game_state = game_state
-
-    def shot(self, ball):
-        rnd = random.randint(0, 2)
-        match rnd:
-            case 0:
-                ball.moving_left = True
-                ball.moving_up = False
-                ball.moving_down = False
-                ball.moving_right = False
-            case 1:
-                ball.moving_left = True
-                ball.moving_up = False
-                ball.moving_down = True
-                ball.moving_right = False
-            case 2:
-                ball.moving_left = True
-                ball.moving_up = True
-                ball.moving_down = False
-                ball.moving_right = False
-        return True
-
-class Ball(pygame.sprite.Sprite):
-    def __init__(self, groups, pos, radius, player, enemy, game_state) -> None:
-        super().__init__(groups)
-        
-        self.player = player
-        self.enemy = enemy
-        self.game_state = game_state
-
-        self.image = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
-        self.rect = self.image.get_rect()
-        self.radius = radius
-        pygame.gfxdraw.aacircle(self.image, self.rect.centerx, self.rect.centery, radius-1, (255, 255, 255) )
-        pygame.gfxdraw.filled_circle(self.image, self.rect.centerx, self.rect.centery, radius-1, (255, 255, 255))
-        self.rect.center = pos
-
-        self.moving_up = False
-        self.moving_down = False
-        self.moving_left = False
-        self.moving_right = False
-        self.moving_vect = pygame.math.Vector2(0, 0)
-
-        self.speed = 5
-        
-        self.win_size = pygame.display.get_window_size()
-
-    def update(self, **kwargs) -> None:
-        super().update()
-        from scenes import GameState
-        
-        match self.game_state:
-            case GameState.BALL_IN_GAME:
-                self.colision()
-                self.moving_vect = pygame.math.Vector2((self.moving_right - self.moving_left), (self.moving_down - self.moving_up))
-            case GameState.PLAYER_START:
-                self.rect.left = self.player.rect.right
-                self.rect.centery = self.player.rect.centery 
-            case GameState.ENEMY_START:
-                self.rect.right = self.enemy.rect.left
-                self.rect.centery = self.enemy.rect.centery 
-            case GameState.PLAYER_GETS_POINT:
-                self.moving_vect = pygame.math.Vector2(0, 0)
-                self.speed = 5
-            case GameState.ENEMY_GETS_POINT:
-                self.moving_vect = pygame.math.Vector2(0, 0)
-                self.speed = 5
-
-        if self.moving_vect.length() > 0: self.moving_vect = self.moving_vect.normalize()
-        self.rect = self.rect.move(self.moving_vect*self.speed)
-
-    def colision(self) -> None:
-        if self.rect.colliderect(self.player.rect) and self.moving_left:
-            self.moving_left = False
-            self.moving_right = True
-            self.speed += 1
-        
-        if self.rect.colliderect(self.enemy.rect) and self.moving_right:
-            self.moving_left = True
-            self.moving_right = False
-            self.speed += 1
-
-        if self.moving_down and self.rect.bottom >= self.win_size[1]:
-            self.moving_down = False
-            self.moving_up = True
-
-        if self.moving_up and self.rect.top <= 0:
-            self.moving_down = True
-            self.moving_up = False
-
-    def set_game_state(self, game_state):
-        self.game_state = game_state
