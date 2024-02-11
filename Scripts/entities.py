@@ -1,5 +1,6 @@
 from typing import Any
 import pygame
+import pygame.gfxdraw
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, groups, scene) -> None:
@@ -89,5 +90,25 @@ class Rect(Entity):
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         super().update(*args, **kwargs)
-    
+
+    def change_size(self, size: list):
+        self.rect_size = size
+        self.image = pygame.Surface(size)
+        self.rect = self.image.get_rect(topleft = self.pos)
+        self.image.fill(self.rect_color)
+
+class Circle(Entity):
+    def __init__(self, groups, scene, circle_radius, circle_color = (255, 255, 255)) -> None:
+        super().__init__(groups, scene)
+
+        self.circle_radius = circle_radius
+        self.circle_color = circle_color
+
+        self.image = pygame.Surface((2*self.circle_radius, 2*self.circle_radius),  pygame.SRCALPHA)
+        self.rect = self.image.get_rect()
+        pygame.gfxdraw.aacircle(self.image, self.rect.centerx, self.rect.centery, self.circle_radius-1, self.circle_color )
+        pygame.gfxdraw.filled_circle(self.image, self.rect.centerx, self.rect.centery, self.circle_radius-1, self.circle_color)
+
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        super().update(*args, **kwargs) 
     

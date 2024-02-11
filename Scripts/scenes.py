@@ -123,9 +123,13 @@ class Game(Scene):
 
         self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
 
-        self.rect = Rect(self.entities, self, [100, 100])
+        self.first_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
+        self.secont_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
+        self.ball = Circle(self.entities, self, 10)
 
-        self.rect.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
+        self.first_player.change_pos_to(left = 0, centery = self.win_size[1]/2)
+        self.secont_player.change_pos_to(right = self.win_size[0], centery = self.win_size[1]/2)
+        self.ball.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
 
     def update(self):
         super().update()
@@ -139,3 +143,4 @@ class Game(Scene):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            
