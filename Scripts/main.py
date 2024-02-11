@@ -13,6 +13,7 @@ class Main():
         self.scene_manager.add(MainMenu("main_menu", self))
         self.scene_manager.add(OptionMenu("options_menu", self))
         self.scene_manager.add(CreditsMenu("credits_menu", self))
+        self.scene_manager.add(Game("game", self))
         
         self.scene_manager.set_curr_scene("main_menu")
         self.curr_scene = self.scene_manager.get_curr_scene()

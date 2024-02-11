@@ -65,6 +65,9 @@ class MainMenu(Scene):
         if self.credits_button.is_clicked_once():
             self.scene_manager.set_curr_scene("credits_menu")
 
+        if self.new_game_button.is_clicked_once():
+            self.scene_manager.set_curr_scene("game")
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -105,6 +108,31 @@ class CreditsMenu(Scene):
     def draw(self):
         super().draw()
     
+    def check_events(self):
+        super().check_events()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+class Game(Scene):
+    def __init__(self, name, main) -> None:
+        super().__init__(name, main)
+        
+        self.title_text = Text(self.entities, self, "GAME", text_size = 64)
+
+        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
+
+        self.rect = Rect(self.entities, self, [100, 100])
+
+        self.rect.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
+
+    def update(self):
+        super().update()
+
+    def draw(self):
+        super().draw()
+
     def check_events(self):
         super().check_events()
         for event in pygame.event.get():

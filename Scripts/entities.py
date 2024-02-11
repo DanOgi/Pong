@@ -75,3 +75,19 @@ class Button(Entity):
                 return True
             return False
         return False
+
+class Rect(Entity):
+    def __init__(self, groups, scene, rect_size: list, rect_color= (255, 255, 255)) -> None:
+        super().__init__(groups, scene)
+
+        self.rect_size = rect_size
+        self.rect_color = rect_color
+
+        self.image = pygame.Surface(self.rect_size)
+        self.rect = self.image.get_rect()
+        self.image.fill(self.rect_color)
+
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        super().update(*args, **kwargs)
+    
+    
