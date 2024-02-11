@@ -24,16 +24,17 @@ class Entity(pygame.sprite.Sprite):
         self.rect = self.rect.move(*pos)
 
 class Text(Entity):
-    def __init__(self, groups, scene, text="Text", text_color = (255, 255, 255), pos = [0, 0]) -> None:
+    def __init__(self, groups, scene, text="Text", text_color = (255, 255, 255), pos = [0, 0], text_size = 20) -> None:
         super().__init__(groups, scene)
         pygame.font.init()
         
         self.text = text
         self.text_color = text_color
+        self.text_size = text_size
 
         self.pos = pos
 
-        self.font = pygame.Font()
+        self.font = pygame.Font(None, self.text_size)
         self.image = self.font.render(self.text, True, self.text_color)
         self.rect = self.image.get_rect(topleft = self.pos)
 
@@ -41,16 +42,17 @@ class Text(Entity):
         super().update(*args, **kwargs)
 
 class Button(Entity):
-    def __init__(self, groups, scene, text="Click", text_color = (255, 255, 255), pos = [0, 0]) -> None:
+    def __init__(self, groups, scene, text="Click", text_color = (255, 255, 255), pos = [0, 0], text_size = 20) -> None:
         super().__init__(groups, scene)
         pygame.font.init()
 
         self.text = text
         self.text_color = text_color
+        self.text_size = text_size
 
         self.pos = pos
 
-        self.font = pygame.Font()
+        self.font = pygame.Font(None, self.text_size)
         self.image = self.font.render(self.text, True, self.text_color)
         self.rect = self.image.get_rect(topleft = self.pos)
         self.clicked = False

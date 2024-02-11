@@ -33,11 +33,11 @@ class MainMenu(Scene):
     def __init__(self, name, main) -> None:
         super().__init__(name, main)
 
-        self.title_text = Text(self.entities, self, "PONG")
-        self.new_game_button = Button(self.entities, self, "New Game")
-        self.options_button = Button(self.entities, self, "Options")
-        self.credits_button = Button(self.entities, self, "Credits")
-        self.exit_button = Button(self.entities, self, "Exit")
+        self.title_text = Text(self.entities, self, "PONG", text_size=128)
+        self.new_game_button = Button(self.entities, self, "New Game", text_size=32)
+        self.options_button = Button(self.entities, self, "Options", text_size=32)
+        self.credits_button = Button(self.entities, self, "Credits", text_size=32)
+        self.exit_button = Button(self.entities, self, "Exit", text_size=32)
 
         self.new_game_button.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
         self.options_button.change_pos_to(midtop = self.new_game_button.rect.midbottom)
@@ -54,8 +54,60 @@ class MainMenu(Scene):
     
     def check_events(self):
         super().check_events()
+
+        if self.exit_button.is_clicked_once():
+            pygame.quit()
+            sys.exit()
+
+        if self.options_button.is_clicked_once():
+            self.scene_manager.set_curr_scene("options_menu")
+
+        if self.credits_button.is_clicked_once():
+            self.scene_manager.set_curr_scene("credits_menu")
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
     
+class OptionMenu(Scene):
+    def __init__(self, name, main) -> None:
+        super().__init__(name, main)
+
+        self.title_text = Text(self.entities, self, "OPTIONS", text_size=64)
+
+        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
+
+    def update(self):
+        super().update()
+    
+    def draw(self):
+        super().draw()
+    
+    def check_events(self):
+        super().check_events()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+class CreditsMenu(Scene):
+    def __init__(self, name, main) -> None:
+        super().__init__(name, main)
+
+        self.title_text = Text(self.entities, self, "CREDITS", text_size=64)
+
+        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
+
+    def update(self):
+        super().update()
+
+    def draw(self):
+        super().draw()
+    
+    def check_events(self):
+        super().check_events()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
