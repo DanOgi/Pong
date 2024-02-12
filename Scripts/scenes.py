@@ -12,6 +12,7 @@ class Scene():
         self.window_manager = self.main.window_manager
         self.win = self.window_manager.get_win_surf()
         self.win_size = self.window_manager.get_win_size()
+        self.dt = self.window_manager.get_delta_time()
 
         self.entities = pygame.sprite.Group()
 
@@ -21,6 +22,7 @@ class Scene():
     def update(self):
         self.win = self.window_manager.get_win_surf()
         self.win_size = self.window_manager.get_win_size()
+        self.dt = self.window_manager.get_delta_time()
         self.entities.update()
 
     def draw(self):
@@ -131,16 +133,42 @@ class Game(Scene):
         self.secont_player.change_pos_to(right = self.win_size[0], centery = self.win_size[1]/2)
         self.ball.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
 
+        self.first_player_movement = [False, False, False, False] #Up Down Left Right
+        self.first_player_movement_vect = pygame.math.Vector2(0, 0)
+        self.first_player_movement_speed = 10
+
     def update(self):
         super().update()
+        self.move_first_player()
 
     def draw(self):
         super().draw()
 
     def check_events(self):
         super().check_events()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    self.first_player_movement[0] = True
+                if event.key == pygame.K_s:
+                    self.first_player_movement[1] = True
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_w:
+                    self.first_player_movement[0] = False
+                if event.key == pygame.K_s:
+                    self.first_player_movement[1] = False
+
+    def move_first_player(self):
+        self.first_player_movement_vect = pygame.math.Vector2(0, (self.first_player_movement[1] - self.first_player_movement[0])) * self.first_player_movement_speed
+        self.first_player.change_pos_by(self.first_player_movement_vect)
+
+
+
+                
             

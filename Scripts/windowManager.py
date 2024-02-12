@@ -10,6 +10,7 @@ class WindowManager():
         self.QUARTER_SCREEN_WIDHT = int(self.SCREEN_WIDHT/4)
         self.QUARTER_SCREEN_HEIGHT = int(self.SCREEN_HEIGHT/4)
         self.create_win()
+        self.dt = self.main.dt
 
     def create_win(self):
         self.win_surf = pygame.display.set_mode((self.SCREEN_WIDHT, self.SCREEN_HEIGHT))
@@ -32,3 +33,9 @@ class WindowManager():
 
     def get_win_size(self):
         return [self.SCREEN_WIDHT, self.SCREEN_HEIGHT]
+    
+    def update_delta_time(self, dt):
+        self.dt = dt
+
+    def get_delta_time(self):
+        return self.dt

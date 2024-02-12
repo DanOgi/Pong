@@ -1,10 +1,17 @@
 import pygame
+import time
 from scenes import *
 from windowManager import WindowManager
 from sceneManager import SceneManager
 
 class Main():
     def __init__(self) -> None:
+        self.main_clock = pygame.time.Clock()
+        self.frame_rate = 60
+
+        self.last_time = time.time()
+        self.dt = 0
+
         self.window_manager = WindowManager(self)
         self.scene_manager = SceneManager(self)
 
@@ -20,6 +27,10 @@ class Main():
 
     def loop(self) -> None:
         while True:
+            self.dt = time.time() - self.last_time
+            self.dt *= 60
+            self.last_time = time.time()
+
             self.curr_scene = self.scene_manager.get_curr_scene()
             self.win_surf.fill("black")
 
@@ -27,7 +38,10 @@ class Main():
             self.curr_scene.update()
             self.curr_scene.draw()
 
-            pygame.display.flip()
+            pygame.display.update()
+            self.main_clock.tick(self.frame_rate)
+            
+            self.window_manager.update_delta_time(self.dt)
 
 m = Main()
 m.loop()
