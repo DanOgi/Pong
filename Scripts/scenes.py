@@ -117,18 +117,25 @@ class CreditsMenu(Scene):
                 pygame.quit()
                 sys.exit()
 
+class GameState(Enum):
+    BALL_IN_GAME = 0
+    FIRST_PLAYER_START = 1
+    FIRST_PLAYER_GETS_POINT = 2
+    SECOND_PLAYER_START = 3
+    SECOND_PLAYER_GETS_POINT = 4
+
 class Game(Scene):
     def __init__(self, name, main) -> None:
         super().__init__(name, main)
-        
-        self.title_text = Text(self.entities, self, "GAME", text_size = 64)
 
-        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
+        self.game_state = GameState.SECOND_PLAYER_START
 
         self.first_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
         self.second_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
         self.ball = Circle(self.entities, self, 10)
+        self.title_text = Text(self.entities, self, "GAME", text_size = 64)
 
+        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
         self.first_player.change_pos_to(left = 0, centery = self.win_size[1]/2)
         self.second_player.change_pos_to(right = self.win_size[0], centery = self.win_size[1]/2)
         self.ball.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
@@ -153,8 +160,22 @@ class Game(Scene):
         self.second_player_ai()
         self.move_second_player()
 
-        self.detect_ball_collision()
-        self.move_ball()
+        match self.game_state:
+            case GameState.BALL_IN_GAME:
+                self.detect_ball_collision()
+                self.move_ball()
+
+            case GameState.FIRST_PLAYER_START:
+                self.ball.change_pos_to(centery = self.first_player.rect.centery, left = self.first_player.rect.right)
+
+            case GameState.FIRST_PLAYER_GETS_POINT:
+                pass
+
+            case GameState.SECOND_PLAYER_START:
+                self.ball.change_pos_to(centery = self.second_player.rect.centery, right = self.second_player.rect.left)
+
+            case GameState.SECOND_PLAYER_GETS_POINT:
+                pass
 
     def draw(self):
         super().draw()
