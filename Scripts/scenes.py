@@ -126,20 +126,31 @@ class Game(Scene):
         self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
 
         self.first_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
-        self.secont_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
+        self.second_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
         self.ball = Circle(self.entities, self, 10)
 
         self.first_player.change_pos_to(left = 0, centery = self.win_size[1]/2)
-        self.secont_player.change_pos_to(right = self.win_size[0], centery = self.win_size[1]/2)
+        self.second_player.change_pos_to(right = self.win_size[0], centery = self.win_size[1]/2)
         self.ball.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
 
         self.first_player_movement = [False, False, False, False] #Up Down Left Right
         self.first_player_movement_vect = pygame.math.Vector2(0, 0)
         self.first_player_movement_speed = 10
 
+        self.second_player_movement = [False, False, False, False] #Up Down Left Right
+        self.second_player_movement_vect = pygame.math.Vector2(0, 0)
+        self.second_player_movement_speed = 10
+
+        self.ball_movement = [False, False, True, False] #Up Down Left Right
+        self.ball_movement_vect = pygame.math.Vector2(0, 0)
+        self.ball_movement_speed = 5
+
     def update(self):
         super().update()
         self.move_first_player()
+        self.move_second_player()
+        self.detect_ball_collision()
+        self.move_ball()
 
     def draw(self):
         super().draw()
@@ -164,10 +175,46 @@ class Game(Scene):
                 if event.key == pygame.K_s:
                     self.first_player_movement[1] = False
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.second_player_movement[0] = True
+                if event.key == pygame.K_DOWN:
+                    self.second_player_movement[1] = True
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_UP:
+                    self.second_player_movement[0] = False
+                if event.key == pygame.K_DOWN:
+                    self.second_player_movement[1] = False
+
     def move_first_player(self):
         self.first_player_movement_vect = pygame.math.Vector2(0, (self.first_player_movement[1] - self.first_player_movement[0])) * self.first_player_movement_speed
         self.first_player.change_pos_by(self.first_player_movement_vect)
 
+    def move_second_player(self):
+        self.second_player_movement_vect = pygame.math.Vector2(0, (self.second_player_movement[1] - self.second_player_movement[0])) * self.second_player_movement_speed
+        self.second_player.change_pos_by(self.second_player_movement_vect)
+
+    def move_ball(self):
+        self.ball_movement_vect = pygame.math.Vector2(self.ball_movement[3] - self.ball_movement[2], self.ball_movement[1] - self.ball_movement[0]) * self.ball_movement_speed
+        self.ball.change_pos_by(self.ball_movement_vect)
+
+    def detect_ball_collision(self):
+        if self.ball_movement[0] and self.ball.rect.top == 0:
+            self.ball_movement[0] = False
+            self.ball_movement[1] = True
+        
+        if self.ball_movement[1] and self.ball.rect.top == self.win_size[1]:
+            self.ball_movement[0] = True
+            self.ball_movement[1] = False
+
+        if self.ball_movement[2] and self.ball.rect.colliderect(self.first_player.rect):
+            self.ball_movement[2] = False
+            self.ball_movement[3] = True
+
+        if self.ball_movement[3] and self.ball.rect.colliderect(self.second_player.rect):
+            self.ball_movement[2] = True
+            self.ball_movement[3] = False
 
 
                 
