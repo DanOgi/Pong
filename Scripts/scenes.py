@@ -31,6 +31,9 @@ class Scene():
     def check_events(self):
         pass
 
+    def reload(self):
+        pass
+
 class MainMenu(Scene):
     def __init__(self, name, main) -> None:
         super().__init__(name, main)
@@ -80,6 +83,9 @@ class MainMenu(Scene):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+    
+    def reload(self):
+        return super().reload()
     
 class OptionMenu(Scene):
     def __init__(self, name, main) -> None:
@@ -142,6 +148,9 @@ class OptionMenu(Scene):
                 if event.key == pygame.K_ESCAPE:
                     self.scene_manager.set_curr_scene("main_menu")
 
+    def reload(self):
+        return super().reload()
+
 class CreditsMenu(Scene):
     def __init__(self, name, main) -> None:
         super().__init__(name, main)
@@ -154,6 +163,8 @@ class CreditsMenu(Scene):
 
     def update(self):
         super().update()
+        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
+        self.creator_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
 
     def draw(self):
         super().draw()
@@ -168,6 +179,9 @@ class CreditsMenu(Scene):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.scene_manager.set_curr_scene("main_menu")
+
+    def reload(self):
+        return super().reload()
 
 class GameState(Enum):
     BALL_IN_GAME = 0
@@ -247,6 +261,11 @@ class Game(Scene):
                 self.second_player_score += 1
                 self.second_player_score_text.change_text(str(self.second_player_score))
                 self.game_state = GameState.FIRST_PLAYER_START
+
+        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
+        self.first_player_score_text.change_pos_to(center = (self.win_size[0]/4, self.win_size[1]/4))
+        self.second_player_score_text.change_pos_to(center = (self.win_size[0]*3/4, self.win_size[1]/4))
+
          
     def draw(self):
         super().draw()
@@ -300,7 +319,9 @@ class Game(Scene):
                 #      self.second_player_movement[1] = False
                     
             
-
+    def reload(self):
+        return super().reload()
+    
     def move_first_player(self):
         self.first_player_movement_vect = pygame.math.Vector2(0, (self.first_player_movement[1] - self.first_player_movement[0])) * self.first_player_movement_speed
         self.first_player.change_pos_by(self.first_player_movement_vect)
