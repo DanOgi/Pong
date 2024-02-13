@@ -180,15 +180,18 @@ class Game(Scene):
 
             case GameState.FIRST_PLAYER_GETS_POINT:
                 self.ball_movement = [False, False, False, False]
+                self.ball_movement_speed = 5
                 self.first_player_score += 1
                 self.first_player_score_text.change_text(str(self.first_player_score))
                 self.game_state = GameState.SECOND_PLAYER_START
 
             case GameState.SECOND_PLAYER_START:
                 self.ball.change_pos_to(centery = self.second_player.rect.centery, right = self.second_player.rect.left)
+                self.second_player_ai_shot()
 
             case GameState.SECOND_PLAYER_GETS_POINT:
                 self.ball_movement = [False, False, False, False]
+                self.ball_movement_speed = 5
                 self.second_player_score += 1
                 self.second_player_score_text.change_text(str(self.second_player_score))
                 self.game_state = GameState.FIRST_PLAYER_START
@@ -275,12 +278,20 @@ class Game(Scene):
             self.ball_movement[1] = False
 
         if self.ball_movement[2] and self.ball.rect.colliderect(self.first_player.rect):
+            if not (self.ball_movement[0] or self.ball_movement[1]):
+                self.ball_movement[0] = self.first_player_movement[0]
+                self.ball_movement[1] = self.first_player_movement[1]
             self.ball_movement[2] = False
-            self.ball_movement[3] = True
+            self.ball_movement[3] = True        
+            self.ball_movement_speed += 1
 
         if self.ball_movement[3] and self.ball.rect.colliderect(self.second_player.rect):
+            if not (self.ball_movement[0] or self.ball_movement[1]):
+                self.ball_movement[0] = self.second_player_movement[0]
+                self.ball_movement[1] = self.second_player_movement[1]
             self.ball_movement[2] = True
             self.ball_movement[3] = False
+            self.ball_movement_speed += 1
 
     def second_player_ai(self):
         if self.ball.rect.centery - self.second_player.rect.centery > self.second_player_ai_epsilon: #a ball is higher that second player
@@ -294,4 +305,21 @@ class Game(Scene):
         else:
             self.second_player_movement[0] = False
             self.second_player_movement[1] = False
-            
+
+    def second_player_ai_shot(self):
+        if self.game_state == GameState.SECOND_PLAYER_START:
+            rnd = random.randint(0, 2)
+            match rnd:
+                case 0:
+                    self.ball_movement[0] = False
+                    self.ball_movement[1] = False
+                    self.ball_movement[2] = True
+                case 1:
+                    self.ball_movement[0] = True
+                    self.ball_movement[1] = False
+                    self.ball_movement[2] = True
+                case 2:
+                    self.ball_movement[0] = False
+                    self.ball_movement[1] = True
+                    self.ball_movement[2] = True
+            self.game_state = GameState.BALL_IN_GAME
