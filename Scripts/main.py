@@ -43,5 +43,6 @@ class Main():
             
             self.window_manager.update_delta_time(self.dt)
 
-m = Main()
-m.loop()
+if __name__ == "__main__":
+    m = Main()
+    m.loop()

@@ -128,7 +128,7 @@ class Game(Scene):
     def __init__(self, name, main) -> None:
         super().__init__(name, main)
 
-        self.game_state = GameState.SECOND_PLAYER_START
+        self.game_state = GameState.FIRST_PLAYER_START
 
         self.first_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
         self.second_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
@@ -143,11 +143,17 @@ class Game(Scene):
         self.first_player_movement = [False, False, False, False] #Up Down Left Right
         self.first_player_movement_vect = pygame.math.Vector2(0, 0)
         self.first_player_movement_speed = 10
+        self.first_player_score = 0
+        self.first_player_score_text = Text(self.entities, self, str(self.first_player_score), text_size=64)
+        self.first_player_score_text.change_pos_to(center = (self.win_size[0]/4, self.win_size[1]/4))
 
         self.second_player_movement = [False, False, False, False] #Up Down Left Right
         self.second_player_movement_vect = pygame.math.Vector2(0, 0)
         self.second_player_movement_speed = 10
         self.second_player_ai_epsilon = 10 # a min number of pixel that are between ball rect centery and second player rect centery needed to make second player move
+        self.second_player_score = 0
+        self.second_player_score_text = Text(self.entities, self, str(self.second_player_score), text_size=64)
+        self.second_player_score_text.change_pos_to(center = (self.win_size[0]*3/4, self.win_size[1]/4))
 
         self.ball_movement = [False, False, False, False] #Up Down Left Right
         self.ball_movement_vect = pygame.math.Vector2(0, 0)
@@ -164,19 +170,29 @@ class Game(Scene):
             case GameState.BALL_IN_GAME:
                 self.detect_ball_collision()
                 self.move_ball()
+                if self.ball.rect.left <= 0:
+                    self.game_state = GameState.SECOND_PLAYER_GETS_POINT
+                if self.ball.rect.right >= self.win_size[0]:
+                    self.game_state = GameState.FIRST_PLAYER_GETS_POINT
 
             case GameState.FIRST_PLAYER_START:
                 self.ball.change_pos_to(centery = self.first_player.rect.centery, left = self.first_player.rect.right)
 
             case GameState.FIRST_PLAYER_GETS_POINT:
-                pass
+                self.ball_movement = [False, False, False, False]
+                self.first_player_score += 1
+                self.first_player_score_text.change_text(str(self.first_player_score))
+                self.game_state = GameState.SECOND_PLAYER_START
 
             case GameState.SECOND_PLAYER_START:
                 self.ball.change_pos_to(centery = self.second_player.rect.centery, right = self.second_player.rect.left)
 
             case GameState.SECOND_PLAYER_GETS_POINT:
-                pass
-
+                self.ball_movement = [False, False, False, False]
+                self.second_player_score += 1
+                self.second_player_score_text.change_text(str(self.second_player_score))
+                self.game_state = GameState.FIRST_PLAYER_START
+         
     def draw(self):
         super().draw()
 
@@ -189,28 +205,40 @@ class Game(Scene):
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
+                #first player keys
                 if event.key == pygame.K_w:
                     self.first_player_movement[0] = True
                 if event.key == pygame.K_s:
                     self.first_player_movement[1] = True
+                if event.key == pygame.K_SPACE and self.game_state == GameState.FIRST_PLAYER_START:
+                    self.ball_movement[3] = True
+                    self.ball_movement[0] = self.first_player_movement[0]
+                    self.ball_movement[1] = self.first_player_movement[1]
+                    self.game_state = GameState.BALL_IN_GAME
+
+                #second player keys
+                # if event.key == pygame.K_UP:
+                #      self.second_player_movement[0] = True
+                # if event.key == pygame.K_DOWN:
+                #     self.second_player_movement[1] = True
+                # if event.key == pygame.K_KP_ENTER and self.game_state == GameState.SECOND_PLAYER_START:
+                #     self.ball_movement[2] = True
+                #     self.ball_movement[0] = self.second_player_movement[0]
+                #     self.ball_movement[1] = self.second_player_movement[1]
+                #     self.game_state = GameState.BALL_IN_GAME
 
             if event.type == pygame.KEYUP:
+                #first player keys
                 if event.key == pygame.K_w:
                     self.first_player_movement[0] = False
                 if event.key == pygame.K_s:
                     self.first_player_movement[1] = False
-
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_UP:
-            #         self.second_player_movement[0] = True
-            #     if event.key == pygame.K_DOWN:
-            #         self.second_player_movement[1] = True
-
-            # if event.type == pygame.KEYUP:
-            #     if event.key == pygame.K_UP:
-            #         self.second_player_movement[0] = False
-            #     if event.key == pygame.K_DOWN:
-            #         self.second_player_movement[1] = False
+                
+                #second player keys
+                # if event.key == pygame.K_UP:
+                #     self.second_player_movement[0] = False
+                # if event.key == pygame.K_DOWN:
+                #      self.second_player_movement[1] = False
 
     def move_first_player(self):
         self.first_player_movement_vect = pygame.math.Vector2(0, (self.first_player_movement[1] - self.first_player_movement[0])) * self.first_player_movement_speed
@@ -237,11 +265,12 @@ class Game(Scene):
         self.ball.change_pos_by(self.ball_movement_vect)
 
     def detect_ball_collision(self):
-        if self.ball_movement[0] and self.ball.rect.top == 0:
+        #self.ball_movement = [False, False, False, False] #Up Down Left Right
+        if self.ball_movement[0] and self.ball.rect.top <= 0:
             self.ball_movement[0] = False
             self.ball_movement[1] = True
         
-        if self.ball_movement[1] and self.ball.rect.top == self.win_size[1]:
+        if self.ball_movement[1] and self.ball.rect.top >= self.win_size[1]:
             self.ball_movement[0] = True
             self.ball_movement[1] = False
 
@@ -265,3 +294,4 @@ class Game(Scene):
         else:
             self.second_player_movement[0] = False
             self.second_player_movement[1] = False
+            

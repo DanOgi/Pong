@@ -1,6 +1,7 @@
 from typing import Any
 import pygame
 import pygame.gfxdraw
+import time
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, groups, scene) -> None:
@@ -41,6 +42,11 @@ class Text(Entity):
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         super().update(*args, **kwargs)
+        self.image = self.font.render(self.text, True, self.text_color)
+        self.rect = self.image.get_rect(topleft = self.pos)
+        
+    def change_text(self, text):
+        self.text = text
 
 class Button(Entity):
     def __init__(self, groups, scene, text="Click", text_color = (255, 255, 255), pos = [0, 0], text_size = 20) -> None:
