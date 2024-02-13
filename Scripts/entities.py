@@ -82,7 +82,56 @@ class Button(Entity):
                 return True
             return False
         return False
+    
+class Carousele(Entity):
+    def __init__(self, groups, scene, text_options : list = ["Text"], pos = [0, 0]) -> None:
+        super().__init__(groups, scene)
+        pygame.font.init()
+        self.f = pygame.Font(None, 32)
+    
+        self.pos = pos
+        self.text_options = text_options
+        self.text_options_index = 0
 
+        self.left_button = Button(groups, scene, "<", text_size=32)
+        self.right_button = Button(groups, scene, ">", text_size=32)
+        self.middle_text = Text(groups, scene, self.text_options[self.text_options_index] ,text_size=32)
+
+        self.left_button.rect.topleft = self.pos
+        self.middle_text.rect.topleft = self.left_button.rect.topright
+        self.middle_text.pos = self.left_button.rect.topright
+        self.right_button.rect.topleft = self.middle_text.rect.topright
+
+        self.part_rect = self.left_button.rect.union(self.middle_text.rect)
+        self.rect = self.part_rect.union(self.right_button.rect)
+
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        super().update(*args, **kwargs)
+        self.left_button.rect.topleft = self.pos
+        self.middle_text.rect.topleft = self.left_button.rect.topright
+        self.middle_text.pos = self.left_button.rect.topright
+        self.right_button.rect.topleft = self.middle_text.rect.topright
+
+        self.part_rect = self.left_button.rect.union(self.middle_text.rect)
+        self.rect = self.part_rect.union(self.right_button.rect)
+
+        if self.right_button.is_clicked_once():
+            if self.text_options_index < len(self.text_options) - 1:
+                self.text_options_index += 1
+            else:
+                self.text_options_index = 0
+
+        if self.left_button.is_clicked_once():
+            if self.text_options_index > 0:
+                self.text_options_index -= 1
+            else:
+                self.text_options_index = len(self.text_options) - 1
+
+        self.middle_text.change_text(self.text_options[self.text_options_index])
+
+    def get_text(self):
+        return self.text_options[self.text_options_index]
+    
 class Rect(Entity):
     def __init__(self, groups, scene, rect_size: list, rect_color= (255, 255, 255)) -> None:
         super().__init__(groups, scene)

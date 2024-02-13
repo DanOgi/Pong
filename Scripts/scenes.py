@@ -80,12 +80,16 @@ class OptionMenu(Scene):
         super().__init__(name, main)
 
         self.title_text = Text(self.entities, self, "OPTIONS", text_size=64)
-
         self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
+        
+        self.carousele_text_options = ["640x480 (4:3)", "800x600 (4:3)", "1024x768 (4:3)", "1280x720 (16:9)", "1280x800 (16:10)", "1366x768 (16:9)",
+                                       "1440x900 (16:10)", "1680x1050 (16:10)", "1920x1080 (16:9)", "1920x1200 (16:10)", "2560x1440 (16:9)"]
+        self.carousele = Carousele(self.entities, self, self.carousele_text_options)
+        self.carousele.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
 
     def update(self):
         super().update()
-    
+
     def draw(self):
         super().draw()
     
@@ -219,7 +223,7 @@ class Game(Scene):
 
             if event.type == pygame.KEYDOWN:
                 #first player keys
-                
+
                 if event.key == pygame.K_ESCAPE:
                     self.scene_manager.set_curr_scene("main_menu")
 
