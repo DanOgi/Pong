@@ -96,13 +96,19 @@ class OptionMenu(Scene):
                 pygame.quit()
                 sys.exit()
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.scene_manager.set_curr_scene("main_menu")
+
 class CreditsMenu(Scene):
     def __init__(self, name, main) -> None:
         super().__init__(name, main)
 
         self.title_text = Text(self.entities, self, "CREDITS", text_size=64)
-
+        self.creator_text = Text(self.entities, self, "Game made by Daniel Ogorzałek", text_size=64)
+        
         self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
+        self.creator_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
 
     def update(self):
         super().update()
@@ -116,6 +122,10 @@ class CreditsMenu(Scene):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.scene_manager.set_curr_scene("main_menu")
 
 class GameState(Enum):
     BALL_IN_GAME = 0
@@ -209,6 +219,10 @@ class Game(Scene):
 
             if event.type == pygame.KEYDOWN:
                 #first player keys
+                
+                if event.key == pygame.K_ESCAPE:
+                    self.scene_manager.set_curr_scene("main_menu")
+
                 if event.key == pygame.K_w:
                     self.first_player_movement[0] = True
                 if event.key == pygame.K_s:
@@ -242,6 +256,8 @@ class Game(Scene):
                 #     self.second_player_movement[0] = False
                 # if event.key == pygame.K_DOWN:
                 #      self.second_player_movement[1] = False
+                    
+            
 
     def move_first_player(self):
         self.first_player_movement_vect = pygame.math.Vector2(0, (self.first_player_movement[1] - self.first_player_movement[0])) * self.first_player_movement_speed
