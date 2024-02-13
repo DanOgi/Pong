@@ -50,6 +50,12 @@ class MainMenu(Scene):
 
     def update(self):
         super().update()
+        self.new_game_button.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
+        self.options_button.change_pos_to(midtop = self.new_game_button.rect.midbottom)
+        self.credits_button.change_pos_to(midtop = self.options_button.rect.midbottom)
+        self.exit_button.change_pos_to(midtop = self.credits_button.rect.midbottom)
+        self.title_text.change_pos_to(midbottom = self.new_game_button.rect.midtop)
+        self.title_text.change_pos_by((0, -self.win_size[1]/10))
     
     def draw(self):
         super().draw()
@@ -87,8 +93,40 @@ class OptionMenu(Scene):
         self.carousele = Carousele(self.entities, self, self.carousele_text_options)
         self.carousele.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
 
+        self.accept_button = Button(self.entities, self, "Accept", text_size=32)
+        self.accept_button.change_pos_to(center=(self.win_size[0]*3/4, self.win_size[1]*3/4))
+
     def update(self):
         super().update()
+
+        if self.accept_button.is_clicked_once():
+            match self.carousele.get_text():
+                case "640x480 (4:3)":
+                    self.window_manager.change_win_size(640, 480)
+                case "800x600 (4:3)":
+                    self.window_manager.change_win_size(800, 600)
+                case "1024x768 (4:3)":
+                    self.window_manager.change_win_size(1024, 768)
+                case "1280x720 (16:9)":
+                    self.window_manager.change_win_size(1280, 720)
+                case "1280x800 (16:10)":
+                    self.window_manager.change_win_size(1280, 800)
+                case "1366x768 (16:9)":
+                    self.window_manager.change_win_size(1366, 768)
+                case "1440x900 (16:10)":
+                    self.window_manager.change_win_size(1440, 900)
+                case "1680x1050 (16:10)":
+                    self.window_manager.change_win_size(1680, 1050)
+                case "1920x1080 (16:9)":
+                    self.window_manager.change_win_size(1920, 1080)
+                case "1920x1200 (16:10)":
+                    self.window_manager.change_win_size(1920, 1200)
+                case "2560x1440 (16:9)":
+                    self.window_manager.change_win_size(2560, 1440)
+
+        self.carousele.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
+        self.accept_button.change_pos_to(center=(self.win_size[0]*3/4, self.win_size[1]*3/4))
+        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
 
     def draw(self):
         super().draw()
