@@ -77,7 +77,7 @@ class MainMenu(Scene):
             self.scene_manager.set_curr_scene("credits_menu")
 
         if self.new_game_button.is_clicked_once():
-            self.scene_manager.set_curr_scene("game")
+            self.scene_manager.set_curr_scene("game_mode_menu")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -402,3 +402,32 @@ class Game(Scene):
                     self.ball_movement[1] = True
                     self.ball_movement[2] = True
             self.game_state = GameState.BALL_IN_GAME
+
+class GameModeMenu(Scene):
+    def __init__(self, name, main) -> None:
+        super().__init__(name, main)
+
+        self.single_player_button = Button(self.entities, self, "Singleplayer", text_size=64)
+        self.hot_seat_button = Button(self.entities, self, "Hot seat", text_size=64)
+
+        self.single_player_button.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
+        self.hot_seat_button.change_pos_to(midtop = self.single_player_button.rect.midbottom)
+
+    def update(self):
+        return super().update()
+    
+    def draw(self):
+        return super().draw()
+    
+    def check_events(self):
+        super().check_events()
+        if self.single_player_button.is_clicked_once():
+            self.scene_manager.set_curr_scene("game")
+
+        if self.hot_seat_button.is_clicked_once():
+            self.scene_manager.set_curr_scene("game")
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()

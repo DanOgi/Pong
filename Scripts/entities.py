@@ -1,4 +1,5 @@
 from typing import Any
+from enum import Enum
 import pygame
 import pygame.gfxdraw
 import time
@@ -48,10 +49,18 @@ class Text(Entity):
     def change_text(self, text):
         self.text = text
 
+class ButtonState(Enum):
+    WAITING_FOR_CURSOR = 0
+    WAITING_FOR_CLICK = 1
+    WAITING_FOR_RELEASE = 2
+    CLICKED = 3
+
 class Button(Entity):
     def __init__(self, groups, scene, text="Click", text_color = (255, 255, 255), pos = [0, 0], text_size = 20) -> None:
         super().__init__(groups, scene)
         pygame.font.init()
+
+        self.button_state = ButtonState.WAITING_FOR_CURSOR
 
         self.text = text
         self.text_color = text_color
@@ -66,21 +75,36 @@ class Button(Entity):
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         super().update(*args, **kwargs)
-        if self.clicked and not pygame.mouse.get_pressed()[0]:
+        mx, my = pygame.mouse.get_pos()
+        mclicked = pygame.mouse.get_pressed()
+        
+        if self.clicked and not mclicked[0]:
             self.clicked = False
 
+        match self.button_state:
+            case ButtonState.WAITING_FOR_CURSOR:
+                if self.rect.collidepoint(mx, my) and mclicked[0]:
+                    self.button_state = ButtonState.WAITING_FOR_RELEASE
+                elif self.rect.collidepoint(mx, my) and not mclicked[0]:
+                    self.button_state = ButtonState.WAITING_FOR_CLICK
+            case ButtonState.WAITING_FOR_CLICK:
+                if mclicked[0]:
+                    self.button_state = ButtonState.CLICKED
+            case ButtonState.WAITING_FOR_RELEASE:
+                if not mclicked[0]:
+                    self.button_state = ButtonState.WAITING_FOR_CLICK
+            case ButtonState.CLICKED:
+                self.clicked = True
+                self.button_state = ButtonState.WAITING_FOR_RELEASE
+
     def is_cursore_over(self):
-        mx, my = pygame.mouse.get_pos()
-        if self.rect.collidepoint(mx, my):
+        if self.button_state != ButtonState.WAITING_FOR_CURSOR:
             return True
         return False 
     
     def is_clicked_once(self):
-        if self.is_cursore_over():
-            if pygame.mouse.get_pressed()[0] and not self.clicked:
-                self.clicked = True
-                return True
-            return False
+        if self.button_state == ButtonState.CLICKED:
+            return True
         return False
     
 class Carousele(Entity):
