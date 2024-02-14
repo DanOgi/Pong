@@ -71,15 +71,11 @@ class Button(Entity):
         self.font = pygame.Font(None, self.text_size)
         self.image = self.font.render(self.text, True, self.text_color)
         self.rect = self.image.get_rect(topleft = self.pos)
-        self.clicked = False
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         super().update(*args, **kwargs)
         mx, my = pygame.mouse.get_pos()
         mclicked = pygame.mouse.get_pressed()
-        
-        if self.clicked and not mclicked[0]:
-            self.clicked = False
 
         match self.button_state:
             case ButtonState.WAITING_FOR_CURSOR:
@@ -94,7 +90,6 @@ class Button(Entity):
                 if not mclicked[0]:
                     self.button_state = ButtonState.WAITING_FOR_CLICK
             case ButtonState.CLICKED:
-                self.clicked = True
                 self.button_state = ButtonState.WAITING_FOR_RELEASE
 
     def is_cursore_over(self):
