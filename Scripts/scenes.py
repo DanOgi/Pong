@@ -190,12 +190,16 @@ class GameState(Enum):
     SECOND_PLAYER_START = 3
     SECOND_PLAYER_GETS_POINT = 4
 
+class GameMode(Enum):
+    SINGLE_PLAYER = 0
+    HOT_SEAT = 1
+
 class Game(Scene):
     def __init__(self, name, main) -> None:
         super().__init__(name, main)
 
         self.game_state = GameState.FIRST_PLAYER_START
-
+        self.game_mode = GameMode.SINGLE_PLAYER
         self.first_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
         self.second_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
         self.ball = Circle(self.entities, self, 10)
@@ -320,7 +324,8 @@ class Game(Scene):
                     
             
     def reload(self):
-        return super().reload()
+        super().reload()
+        self.game_mode = self.main.game_mode
     
     def move_first_player(self):
         self.first_player_movement_vect = pygame.math.Vector2(0, (self.first_player_movement[1] - self.first_player_movement[0])) * self.first_player_movement_speed
@@ -422,9 +427,11 @@ class GameModeMenu(Scene):
     def check_events(self):
         super().check_events()
         if self.single_player_button.is_clicked_once():
+            self.main.game_mode = GameMode.SINGLE_PLAYER
             self.scene_manager.set_curr_scene("game")
 
         if self.hot_seat_button.is_clicked_once():
+            self.main.game_mode = GameMode.HOT_SEAT
             self.scene_manager.set_curr_scene("game")
 
         for event in pygame.event.get():

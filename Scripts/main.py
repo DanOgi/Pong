@@ -26,6 +26,8 @@ class Main():
         self.scene_manager.set_curr_scene("main_menu")
         self.curr_scene = self.scene_manager.get_curr_scene()
 
+        self.game_mode = None
+
     def loop(self) -> None:
         while True:
             self.dt = time.time() - self.last_time
