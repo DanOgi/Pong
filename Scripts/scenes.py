@@ -233,7 +233,8 @@ class Game(Scene):
         super().update()
         self.move_first_player()
 
-        self.second_player_ai()
+        if self.game_mode == GameMode.SINGLE_PLAYER:
+            self.second_player_ai()
         self.move_second_player()
 
         match self.game_state:
@@ -257,7 +258,8 @@ class Game(Scene):
 
             case GameState.SECOND_PLAYER_START:
                 self.ball.change_pos_to(centery = self.second_player.rect.centery, right = self.second_player.rect.left)
-                self.second_player_ai_shot()
+                if self.game_mode == GameMode.SINGLE_PLAYER:
+                    self.second_player_ai_shot()
 
             case GameState.SECOND_PLAYER_GETS_POINT:
                 self.ball_movement = [False, False, False, False]
@@ -299,15 +301,16 @@ class Game(Scene):
                     self.game_state = GameState.BALL_IN_GAME
 
                 #second player keys
-                # if event.key == pygame.K_UP:
-                #      self.second_player_movement[0] = True
-                # if event.key == pygame.K_DOWN:
-                #     self.second_player_movement[1] = True
-                # if event.key == pygame.K_KP_ENTER and self.game_state == GameState.SECOND_PLAYER_START:
-                #     self.ball_movement[2] = True
-                #     self.ball_movement[0] = self.second_player_movement[0]
-                #     self.ball_movement[1] = self.second_player_movement[1]
-                #     self.game_state = GameState.BALL_IN_GAME
+                if self.game_mode == GameMode.HOT_SEAT:
+                    if event.key == pygame.K_UP:
+                        self.second_player_movement[0] = True
+                    if event.key == pygame.K_DOWN:
+                        self.second_player_movement[1] = True
+                    if event.key == pygame.K_KP_ENTER and self.game_state == GameState.SECOND_PLAYER_START:
+                        self.ball_movement[2] = True
+                        self.ball_movement[0] = self.second_player_movement[0]
+                        self.ball_movement[1] = self.second_player_movement[1]
+                        self.game_state = GameState.BALL_IN_GAME
 
             if event.type == pygame.KEYUP:
                 #first player keys
@@ -317,10 +320,11 @@ class Game(Scene):
                     self.first_player_movement[1] = False
                 
                 #second player keys
-                # if event.key == pygame.K_UP:
-                #     self.second_player_movement[0] = False
-                # if event.key == pygame.K_DOWN:
-                #      self.second_player_movement[1] = False
+                if self.game_mode == GameMode.HOT_SEAT:
+                    if event.key == pygame.K_UP:
+                        self.second_player_movement[0] = False
+                    if event.key == pygame.K_DOWN:
+                        self.second_player_movement[1] = False
                     
             
     def reload(self):

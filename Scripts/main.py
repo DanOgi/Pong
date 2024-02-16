@@ -4,6 +4,8 @@ from scenes import *
 from windowManager import WindowManager
 from sceneManager import SceneManager
 
+# TODO Dodać do scenemanagera możliwość przesyłania zmiennych pomiędzy scenami 
+
 class Main():
     def __init__(self) -> None:
         self.main_clock = pygame.time.Clock()
