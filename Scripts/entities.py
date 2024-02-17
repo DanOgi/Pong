@@ -86,11 +86,18 @@ class Button(Entity):
             case ButtonState.WAITING_FOR_CLICK:
                 if mclicked[0]:
                     self.button_state = ButtonState.CLICKED
+                elif not self.rect.collidepoint(mx, my):
+                    self.button_state = ButtonState.WAITING_FOR_CURSOR
             case ButtonState.WAITING_FOR_RELEASE:
                 if not mclicked[0]:
                     self.button_state = ButtonState.WAITING_FOR_CLICK
+                elif not self.rect.collidepoint(mx, my):
+                    self.button_state = ButtonState.WAITING_FOR_CURSOR
             case ButtonState.CLICKED:
-                self.button_state = ButtonState.WAITING_FOR_RELEASE
+                if not self.rect.collidepoint(mx, my):
+                    self.button_state = ButtonState.WAITING_FOR_CURSOR
+                else:
+                    self.button_state = ButtonState.WAITING_FOR_RELEASE
 
     def is_cursore_over(self):
         if self.button_state != ButtonState.WAITING_FOR_CURSOR:

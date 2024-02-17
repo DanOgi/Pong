@@ -326,10 +326,11 @@ class Game(Scene):
                     if event.key == pygame.K_DOWN:
                         self.second_player_movement[1] = False
                     
-            
+
     def reload(self):
         super().reload()
-        self.game_mode = self.main.game_mode
+        atributes_dict = self.scene_manager.transfer_list["game"]
+        self.game_mode = atributes_dict["game_mode"]
     
     def move_first_player(self):
         self.first_player_movement_vect = pygame.math.Vector2(0, (self.first_player_movement[1] - self.first_player_movement[0])) * self.first_player_movement_speed
@@ -420,7 +421,7 @@ class GameModeMenu(Scene):
         self.hot_seat_button = Button(self.entities, self, "Hot seat", text_size=64)
 
         self.single_player_button.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
-        self.hot_seat_button.change_pos_to(midtop = self.single_player_button.rect.midbottom)
+        self.hot_seat_button.change_pos_to(centerx = self.single_player_button.rect.centerx, top = self.single_player_button.rect.bottom)
 
     def update(self):
         return super().update()
@@ -431,11 +432,11 @@ class GameModeMenu(Scene):
     def check_events(self):
         super().check_events()
         if self.single_player_button.is_clicked_once():
-            self.main.game_mode = GameMode.SINGLE_PLAYER
+            self.scene_manager.set_atribute("game", game_mode = GameMode.SINGLE_PLAYER)
             self.scene_manager.set_curr_scene("game")
 
         if self.hot_seat_button.is_clicked_once():
-            self.main.game_mode = GameMode.HOT_SEAT
+            self.scene_manager.set_atribute("game", game_mode = GameMode.HOT_SEAT)
             self.scene_manager.set_curr_scene("game")
 
         for event in pygame.event.get():
