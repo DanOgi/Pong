@@ -21,7 +21,7 @@ class SceneManager():
         for s in self.scene_list:
             if s.name == scene_name:
                 self.curr_scene = s
-                self.curr_scene.reload()
+                s.need_reload = True
                 return
                   
     def get_curr_scene(self) -> Scene:

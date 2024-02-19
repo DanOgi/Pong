@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+from math import sqrt
 from enum import Enum
 from entities import *
 
@@ -15,6 +16,8 @@ class Scene():
         self.dt = self.window_manager.get_delta_time()
 
         self.entities = pygame.sprite.Group()
+        
+        self.need_reload = False
 
     def __eq__(self, other: object) -> bool:
         return self.name == other.name
@@ -25,6 +28,10 @@ class Scene():
         self.dt = self.window_manager.get_delta_time()
         self.entities.update()
 
+        if self.need_reload:
+            self.reload()
+            self.need_reload = False
+
     def draw(self):
         self.entities.draw(self.win)
 
@@ -32,7 +39,7 @@ class Scene():
         pass
 
     def reload(self):
-        pass
+        print(f"Reload: {self.name}")
 
 class MainMenu(Scene):
     def __init__(self, name, main) -> None:
@@ -53,12 +60,6 @@ class MainMenu(Scene):
 
     def update(self):
         super().update()
-        self.new_game_button.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
-        self.options_button.change_pos_to(midtop = self.new_game_button.rect.midbottom)
-        self.credits_button.change_pos_to(midtop = self.options_button.rect.midbottom)
-        self.exit_button.change_pos_to(midtop = self.credits_button.rect.midbottom)
-        self.title_text.change_pos_to(midbottom = self.new_game_button.rect.midtop)
-        self.title_text.change_pos_by((0, -self.win_size[1]/10))
     
     def draw(self):
         super().draw()
@@ -85,7 +86,13 @@ class MainMenu(Scene):
                 sys.exit()
     
     def reload(self):
-        return super().reload()
+        super().reload()
+        self.new_game_button.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
+        self.options_button.change_pos_to(midtop = self.new_game_button.rect.midbottom)
+        self.credits_button.change_pos_to(midtop = self.options_button.rect.midbottom)
+        self.exit_button.change_pos_to(midtop = self.credits_button.rect.midbottom)
+        self.title_text.change_pos_to(midbottom = self.new_game_button.rect.midtop)
+        self.title_text.change_pos_by((0, -self.win_size[1]/10))
     
 class OptionMenu(Scene):
     def __init__(self, name, main) -> None:
@@ -106,6 +113,7 @@ class OptionMenu(Scene):
         super().update()
 
         if self.accept_button.is_clicked_once():
+            self.need_reload = True
             match self.carousele.get_text():
                 case "640x480 (4:3)":
                     self.window_manager.change_win_size(640, 480)
@@ -130,10 +138,6 @@ class OptionMenu(Scene):
                 case "2560x1440 (16:9)":
                     self.window_manager.change_win_size(2560, 1440)
 
-        self.carousele.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
-        self.accept_button.change_pos_to(center=(self.win_size[0]*3/4, self.win_size[1]*3/4))
-        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
-
     def draw(self):
         super().draw()
     
@@ -149,7 +153,10 @@ class OptionMenu(Scene):
                     self.scene_manager.set_curr_scene("main_menu")
 
     def reload(self):
-        return super().reload()
+        super().reload()
+        self.carousele.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
+        self.accept_button.change_pos_to(center=(self.win_size[0]*3/4, self.win_size[1]*3/4))
+        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
 
 class CreditsMenu(Scene):
     def __init__(self, name, main) -> None:
@@ -163,8 +170,6 @@ class CreditsMenu(Scene):
 
     def update(self):
         super().update()
-        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
-        self.creator_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
 
     def draw(self):
         super().draw()
@@ -181,7 +186,9 @@ class CreditsMenu(Scene):
                     self.scene_manager.set_curr_scene("main_menu")
 
     def reload(self):
-        return super().reload()
+        super().reload()
+        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
+        self.creator_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
 
 class GameState(Enum):
     BALL_IN_GAME = 0
@@ -202,7 +209,12 @@ class Game(Scene):
         self.game_mode = GameMode.SINGLE_PLAYER
         self.first_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
         self.second_player = Rect(self.entities, self, [self.win_size[0]*0.015, self.win_size[1]*0.15])
-        self.ball = Circle(self.entities, self, 10)
+        #2 496
+        sqr_win_size = self.win_size[0] * self.win_size[1]
+        sqr_ball_rect = int(sqr_win_size/2496)
+        ball_radius = int(sqrt(sqr_ball_rect)/2)
+        
+        self.ball = Circle(self.entities, self, ball_radius)
         self.title_text = Text(self.entities, self, "GAME", text_size = 64)
 
         self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
@@ -268,10 +280,6 @@ class Game(Scene):
                 self.second_player_score_text.change_text(str(self.second_player_score))
                 self.game_state = GameState.FIRST_PLAYER_START
 
-        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
-        self.first_player_score_text.change_pos_to(center = (self.win_size[0]/4, self.win_size[1]/4))
-        self.second_player_score_text.change_pos_to(center = (self.win_size[0]*3/4, self.win_size[1]/4))
-
          
     def draw(self):
         super().draw()
@@ -331,6 +339,23 @@ class Game(Scene):
         super().reload()
         atributes_dict = self.scene_manager.transfer_list["game"]
         self.game_mode = atributes_dict["game_mode"]
+
+        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
+        self.first_player_score_text.change_pos_to(center = (self.win_size[0]/4, self.win_size[1]/4))
+        self.second_player_score_text.change_pos_to(center = (self.win_size[0]*3/4, self.win_size[1]/4))
+
+        self.first_player.change_size([self.win_size[0]*0.015, self.win_size[1]*0.15])
+        self.second_player.change_size([self.win_size[0]*0.015, self.win_size[1]*0.15])
+
+        sqr_win_size = self.win_size[0] * self.win_size[1]
+        sqr_ball_rect = int(sqr_win_size/2496)
+        ball_radius = int(sqrt(sqr_ball_rect)/2)
+        self.ball.change_size(ball_radius)
+
+        self.title_text.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/8))
+        self.first_player.change_pos_to(left = 0, centery = self.win_size[1]/2)
+        self.second_player.change_pos_to(right = self.win_size[0], centery = self.win_size[1]/2)
+        self.ball.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
     
     def move_first_player(self):
         self.first_player_movement_vect = pygame.math.Vector2(0, (self.first_player_movement[1] - self.first_player_movement[0])) * self.first_player_movement_speed
@@ -443,3 +468,12 @@ class GameModeMenu(Scene):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.scene_manager.set_curr_scene("main_menu")
+    
+    def reload(self):
+        super().reload()
+        self.single_player_button.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
+        self.hot_seat_button.change_pos_to(centerx = self.single_player_button.rect.centerx, top = self.single_player_button.rect.bottom)

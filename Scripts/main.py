@@ -4,6 +4,9 @@ from scenes import *
 from windowManager import WindowManager
 from sceneManager import SceneManager
 
+#TODO: Naprawić by przy zmianie rozdzielczości zmieniała się też prędkość piłki
+#TODO: Dodać zmiannę wielkości czcionki przy zmianie rodzielczości 
+
 class Main():
     def __init__(self) -> None:
         self.main_clock = pygame.time.Clock()
@@ -25,8 +28,6 @@ class Main():
         
         self.scene_manager.set_curr_scene("main_menu")
         self.curr_scene = self.scene_manager.get_curr_scene()
-
-        self.game_mode = None
 
     def loop(self) -> None:
         while True:

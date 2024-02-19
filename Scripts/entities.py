@@ -192,4 +192,11 @@ class Circle(Entity):
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         super().update(*args, **kwargs) 
+
+    def change_size(self, radius):
+        self.circle_radius = radius
+        self.image = pygame.Surface((2*self.circle_radius, 2*self.circle_radius),  pygame.SRCALPHA)
+        self.rect = self.image.get_rect()
+        pygame.gfxdraw.aacircle(self.image, self.rect.centerx, self.rect.centery, self.circle_radius-1, self.circle_color )
+        pygame.gfxdraw.filled_circle(self.image, self.rect.centerx, self.rect.centery, self.circle_radius-1, self.circle_color)
     
