@@ -4,7 +4,6 @@ from scenes import *
 from windowManager import WindowManager
 from sceneManager import SceneManager
 
-#TODO: Naprawić by przy zmianie rozdzielczości zmieniała się też prędkość piłki
 #TODO: Dodać zmiannę wielkości czcionki przy zmianie rodzielczości 
 
 class Main():

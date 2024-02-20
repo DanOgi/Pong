@@ -240,6 +240,7 @@ class Game(Scene):
         self.ball_movement = [False, False, False, False] #Up Down Left Right
         self.ball_movement_vect = pygame.math.Vector2(0, 0)
         self.ball_movement_speed = 5
+        self.ball_movement_speed_add_value = int(5*0.2)
 
     def update(self):
         super().update()
@@ -356,6 +357,20 @@ class Game(Scene):
         self.first_player.change_pos_to(left = 0, centery = self.win_size[1]/2)
         self.second_player.change_pos_to(right = self.win_size[0], centery = self.win_size[1]/2)
         self.ball.change_pos_to(center = (self.win_size[0]/2, self.win_size[1]/2))
+
+        self.ball_movement_speed = int(self.win_size[0]/256)
+        self.ball_movement_speed_add_value = int(self.ball_movement_speed*0.2)
+        if self.ball_movement_speed_add_value < 1:
+            self.ball_movement_speed_add_value = 1
+
+        self.game_state = GameState.FIRST_PLAYER_START
+        
+        self.first_player_score = 0
+        self.second_player_score = 0
+
+        self.first_player_score_text.change_text(str(self.first_player_score))
+        self.second_player_score_text.change_text(str(self.second_player_score))
+
     
     def move_first_player(self):
         self.first_player_movement_vect = pygame.math.Vector2(0, (self.first_player_movement[1] - self.first_player_movement[0])) * self.first_player_movement_speed
@@ -397,7 +412,7 @@ class Game(Scene):
                 self.ball_movement[1] = self.first_player_movement[1]
             self.ball_movement[2] = False
             self.ball_movement[3] = True        
-            self.ball_movement_speed += 1
+            self.ball_movement_speed += self.ball_movement_speed_add_value
 
         if self.ball_movement[3] and self.ball.rect.colliderect(self.second_player.rect):
             if not (self.ball_movement[0] or self.ball_movement[1]):
@@ -405,7 +420,7 @@ class Game(Scene):
                 self.ball_movement[1] = self.second_player_movement[1]
             self.ball_movement[2] = True
             self.ball_movement[3] = False
-            self.ball_movement_speed += 1
+            self.ball_movement_speed += self.ball_movement_speed_add_value
 
     def second_player_ai(self):
         if self.ball.rect.centery - self.second_player.rect.centery > self.second_player_ai_epsilon: #a ball is higher that second player
